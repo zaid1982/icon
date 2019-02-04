@@ -18,65 +18,25 @@ try {
     $request_method = filter_input(INPUT_SERVER, 'REQUEST_METHOD'); 
     $fn_general->log_debug($api_name, __LINE__, 'Request method = '.$request_method);
     
-    //$headers = apache_request_headers();
-    //$fn_general->log_debug($api_name, __LINE__, $headers['Authorization']);
-    
     if ('POST' === $request_method) {
         $action = filter_input(INPUT_POST, 'action');
-        $username = filter_input(INPUT_POST, 'username');
         
         Class_db::getInstance()->db_beginTransaction();
         $is_transaction = true;        
         
-        if (is_null($action)) {
-            $password = filter_input(INPUT_POST, 'password');  
-
-            if (is_null($username) || $username === '') { 
-                throw new Exception('(ErrCode:2001) [' . __LINE__ . '] - Sila pastikan Pengguna ID diisi', 31);         
-            } 
-            if (is_null($password) || $password === '') { 
-                throw new Exception('(ErrCode:2002) [' . __LINE__ . '] - Sila pastikan Kata Laluan diisi', 31);         
-            }      
-
-            $sys_user = Class_db::getInstance()->db_select_single('sys_user', array('user_email'=>$username));
-            if (empty($sys_user)) {
-                throw new Exception('(ErrCode:2003) [' . __LINE__ . '] - Pengguna ID tidak wujud dalam sistem', 31);
-            } 
-            if ($sys_user['user_password'] !== md5($password)) {
-                throw new Exception('(ErrCode:2004) [' . __LINE__ . '] - Kata Laluan tidak tepat', 31);
-            } 
-            if ($sys_user['user_status'] !== '1') {
-                throw new Exception('(ErrCode:2005) [' . __LINE__ . '] - Pengguna ID tidak aktif. Sila hubungi pihak Admin.', 31);
-            }
-
-            $userId = $sys_user['user_id'];
-            $groupId = $sys_user['group_id'];
-
-            $token = $fn_login->create_jwt($userId, $username);        
-            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array('sys_user_role.user_id'=>$userId));
-            $sys_group = Class_db::getInstance()->db_select_single('sys_group', array('group_id'=>$groupId), null, 1);
-
-            $result['token'] = $token;
-            $result['userId'] = $userId;
-            $result['userFirstName'] = $sys_user['user_first_name'];
-            $result['userLastName'] = $sys_user['user_last_name'];
-            $result['userType'] = $sys_user['user_type'];
-            $result['isFirstTime'] = is_null($sys_user['user_time_activate']) ? 'Yes' : 'No';
-            $result['roles'] = $arr_roles;
-            $result['group']['groupId'] = $sys_group['group_id'];
-            $result['group']['groupName'] = $sys_group['group_name'];
-            $result['group']['groupType'] = $sys_group['group_type'];
-            $result['group']['groupRegNo'] = $fn_general->clear_null($sys_group['group_reg_no']);
-            $result['group']['groupStatus'] = $sys_group['group_status'];
-            $result['menu'] = $fn_login->get_menu_list($arr_roles);        
-
-            $fn_general->save_audit('1', $userId);   
+        if ($action === 'login') {  
+            $username = filter_input(INPUT_POST, 'username');
+            $password = filter_input(INPUT_POST, 'password');      
+            
+            $result = $fn_login->check_login($username, $password);
+            $fn_general->save_audit('1', $result['userId']);   
         }     
-        else if ($action === 'forgot_password') {         
+        else if ($action === 'forgot_password') {      
+            $username = filter_input(INPUT_POST, 'username');   
             $userId = $fn_user->forgot_password($username);
-            $fn_general->save_audit('3', $userId); 
+            $fn_general->save_audit('4', $userId); 
         } else {
-            throw new Exception('(ErrCode:2006) [' . __LINE__ . '] - Parameter action ('.$action.') invalid'); 
+            throw new Exception('(ErrCode:2001) [' . __LINE__ . '] - Parameter action ('.$action.') invalid'); 
         }
         
         Class_db::getInstance()->db_commit(); 
@@ -96,7 +56,7 @@ try {
     if ($ex->getCode() === 31) {
         $form_data['errmsg'] = substr($ex->getMessage(), strpos($ex->getMessage(), '] - ') + 4);
     } else {
-        $form_data['errmsg'] = 'Berlaku kesilapan pada sistem. Sila hubungi pihak Admin!';
+        $form_data['errmsg'] = 'Error occured. Please contact Administrator!';
     }
     $fn_general->log_error($api_name, __LINE__, $ex->getMessage());
 }

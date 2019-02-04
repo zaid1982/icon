@@ -70,6 +70,7 @@ class Class_email {
             } 
             
             $sys_user = Class_db::getInstance()->db_select_single('sys_user', array('user_id'=>$userId), NULL, 1);
+            $sys_profile = Class_db::getInstance()->db_select_single('sys_user_profile', array('user_id'=>$userId, 'user_profile_status'=>'1'), NULL, 1);
             $email_template = Class_db::getInstance()->db_select_single('email_template', array('email_template_id'=>$emailTemplateId), NULL, 1); 
             $emailTitle = $email_template['email_template_title'];
             $emailHtml = $email_template['email_template_html'];
@@ -87,8 +88,9 @@ class Class_email {
                     $emailHtml = str_replace ("[".$paramCode."]", $emailParam[$paramCode], $emailHtml);
                 }
             }
+            $emailHtml = str_replace ("[fullName]", $sys_user['user_first_name'].' '.$sys_user['user_last_name'], $emailHtml);
             
-            Class_db::getInstance()->db_insert('email_send', array('email_template_id'=>$emailTemplateId, 'email_address'=>$sys_user['user_email'], 'email_title'=>$emailTitle,
+            Class_db::getInstance()->db_insert('email_send', array('email_template_id'=>$emailTemplateId, 'email_address'=>$sys_profile['user_email'], 'email_title'=>$emailTitle,
                 'email_html'=>$emailHtml, 'user_id'=>$userId));
             return true;
         } catch(Exception $ex) {  

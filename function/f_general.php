@@ -222,29 +222,7 @@ class Class_general {
             throw new Exception($this->get_exception('0051', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
-    public function getCertificate ($certificateId='') {
-        try {
-            $this->log_debug(__FUNCTION__, __LINE__, 'Entering getCertificate()');    
-            
-            $certificate = '';
-            if (!empty($certificateId)) {
-                $pdfId = Class_db::getInstance()->db_select_col('sem_certificate', array('certificate_id'=>$certificateId), 'pdf_id');
-                if (!empty($pdfId)) { 
-                    $result = Class_db::getInstance()->db_select_single('sys_pdf', array('pdf_id'=>$pdfId));
-                    if (!empty($result)) { 
-                        $certificate = '//localhost/spdp/seminar/api/'.$result['pdf_folder'].'/'.$result['pdf_filename'];
-                    }
-                }  
-            }                              
-            
-            return $certificate;       
-        } catch(Exception $ex) {
-            $this->log_error(__FUNCTION__, __LINE__, $ex->getMessage());            
-            throw new Exception($this->get_exception('0051', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
-        }
-    }
-    
+        
     public function convertMysqlDate ($date='') {
         try {
             $this->log_debug(__FUNCTION__, __LINE__, 'Entering convertMysqlDate()');            
