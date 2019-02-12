@@ -26,10 +26,11 @@ try {
         
         if ($action === 'login') {  
             $username = filter_input(INPUT_POST, 'username');
-            $password = filter_input(INPUT_POST, 'password');      
-            
-            $result = $fn_login->check_login($username, $password);
-            $fn_general->save_audit('1', $result['userId']);   
+            $password = filter_input(INPUT_POST, 'password');
+            $roleType = filter_input(INPUT_POST, 'roleType');
+
+            $result = $fn_login->check_login($username, $password, $roleType);
+            $fn_general->save_audit('1', $result['userId']);
         }     
         else if ($action === 'forgot_password') {      
             $username = filter_input(INPUT_POST, 'username');   

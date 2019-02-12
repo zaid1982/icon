@@ -28,7 +28,12 @@ class Class_login {
             return "(ErrCode:".$codes.") [".__CLASS__.":".$function.":".$line."]";
         }
     }
-    
+
+    /**
+     * @param $property
+     * @return mixed
+     * @throws Exception
+     */
     public function __get($property) {
         if (property_exists($this, $property)) {
             return $this->$property;
@@ -37,30 +42,50 @@ class Class_login {
         }
     }
 
-    public function __set( $property, $value ) {
+    /**
+     * @param $property
+     * @param $value
+     * @throws Exception
+     */
+    public function __set($property, $value ) {
         if (property_exists($this, $property)) {
             $this->$property = $value;        
         } else {
             throw new Exception($this->get_exception('0002', __FUNCTION__, __LINE__, 'Get Property not exist ['.$property.']'));
         }
     }
-    
-    public function __isset( $property ) {
+
+    /**
+     * @param $property
+     * @return bool
+     * @throws Exception
+     */
+    public function __isset($property ) {
         if (property_exists($this, $property)) {
             return isset($this->$property);
         } else {
             throw new Exception($this->get_exception('0003', __FUNCTION__, __LINE__, 'Get Property not exist ['.$property.']'));
         }
     }
-    
-    public function __unset( $property ) {
+
+    /**
+     * @param $property
+     * @throws Exception
+     */
+    public function __unset($property ) {
         if (property_exists($this, $property)) {
             unset($this->$property);
         } else {
             throw new Exception($this->get_exception('0004', __FUNCTION__, __LINE__, 'Get Property not exist ['.$property.']'));
         }
     }
-               
+
+    /**
+     * @param string $userId
+     * @param string $username
+     * @return string
+     * @throws Exception
+     */
     public function create_jwt ($userId='', $username='') {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering create_jwt()');
@@ -80,7 +105,12 @@ class Class_login {
             throw new Exception($this->get_exception('0101', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
+
+    /**
+     * @param string $jwt
+     * @return object
+     * @throws Exception
+     */
     public function check_jwt ($jwt='') {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering check_jwt()');
@@ -101,13 +131,15 @@ class Class_login {
             throw new Exception($this->get_exception('0101', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
-    public function get_menu_list ($arr_roles='') {
+
+    /**
+     * @param array $arr_roles
+     * @return array
+     * @throws Exception
+     */
+    public function get_menu_list ($arr_roles=array()) {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_menu_list()');
-            if ($arr_roles === '') {
-                throw new Exception('(ErrCode:0106) [' . __LINE__ . '] - Parameter arr_roles empty');  
-            }
             if (empty($arr_roles)) {
                 throw new Exception('(ErrCode:0107) [' . __LINE__ . '] - Array arr_roles empty');  
             }
@@ -139,8 +171,15 @@ class Class_login {
             throw new Exception($this->get_exception('0101', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
-    public function check_login ($username='', $password='') {
+
+    /**
+     * @param $username
+     * @param $password
+     * @param $roleType
+     * @return array
+     * @throws Exception
+     */
+    public function check_login ($username, $password, $roleType) {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering check_login()');
             if (is_null($username) || $username === '') { 
@@ -148,26 +187,32 @@ class Class_login {
             } 
             if (is_null($password) || $password === '') { 
                 throw new Exception('(ErrCode:0109) [' . __LINE__ . '] - Password is empty', 31);         
-            }      
+            }
+            if (is_null($roleType) || $roleType === '') {
+                throw new Exception('(ErrCode:0110) [' . __LINE__ . '] - Role Type is empty');
+            }
 
             $profile = Class_db::getInstance()->db_select_single('vw_profile', array('user_name'=>$username));
             if (empty($profile)) {
-                throw new Exception('(ErrCode:0110) [' . __LINE__ . '] - User ID is not exist', 31);
+                throw new Exception('(ErrCode:0111) [' . __LINE__ . '] - User ID is not exist', 31);
             } 
             if ($profile['user_password'] !== md5($password)) {
-                throw new Exception('(ErrCode:0111) [' . __LINE__ . '] - Password is incorrect', 31);
+                throw new Exception('(ErrCode:0112) [' . __LINE__ . '] - Password is incorrect', 31);
             } 
             if ($profile['user_status'] !== '1') {
-                throw new Exception('(ErrCode:0112) [' . __LINE__ . '] - User ID is not active. Please contact Administrator to activate.', 31);
+                throw new Exception('(ErrCode:0113) [' . __LINE__ . '] - User ID is not active. Please contact Administrator to activate.', 31);
             }
 
             $userId = $profile['user_id'];
-            $groupId = $profile['group_id'];
-            $token = $this->create_jwt($userId, $username);  
             $result = array();
+            $arr_roleType = array('', 'complainer', 'internal', 'contractor');
             
-            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array('sys_user_role.user_id'=>$userId));
-            $sys_group = Class_db::getInstance()->db_select_single('sys_group', array('group_id'=>$groupId), null, 1);
+            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array('sys_user_role.user_id'=>$userId, 'ref_role.role_type'=>$roleType));
+            if (empty($arr_roles)) {
+                throw new Exception('(ErrCode:0114) [' . __LINE__ . '] - User ID not exist as '.$arr_roleType[$roleType], 31);
+            }
+
+            $token = $this->create_jwt($userId, $username);
 
             $result['token'] = $token;
             $result['userId'] = $userId;
@@ -184,11 +229,19 @@ class Class_login {
             $result['address']['addressCity'] = $this->fn_general->clear_null($profile['address_city']);          
             $result['address']['addressState'] = $this->fn_general->clear_null($profile['state_desc']);
             $result['roles'] = $arr_roles;
-            $result['group']['groupId'] = $sys_group['group_id'];
-            $result['group']['groupName'] = $sys_group['group_name'];
-            $result['group']['groupType'] = $sys_group['group_type'];
-            $result['group']['groupRegNo'] = $this->fn_general->clear_null($sys_group['group_reg_no']);
-            $result['group']['groupStatus'] = $sys_group['group_status'];
+
+
+            if ($roleType == '3') {
+                $groupId = Class_db::getInstance()->db_select_col('sys_user_group', array('user_id'=>$userId), null, 1);
+                $sys_group = Class_db::getInstance()->db_select_single('sys_group', array('group_id'=>$groupId), null, 1);
+                $result['group']['groupId'] = $sys_group['group_id'];
+                $result['group']['groupName'] = $sys_group['group_name'];
+                $result['group']['groupType'] = $sys_group['group_type'];
+                $result['group']['groupRegNo'] = $this->fn_general->clear_null($sys_group['group_reg_no']);
+                $result['group']['groupStatus'] = $sys_group['group_status'];
+            } else {
+                $result['group'] = '';
+            }
             //$result['menu'] = $fn_login->get_menu_list($arr_roles);        
             
             return $result;
