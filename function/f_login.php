@@ -229,7 +229,6 @@ class Class_login {
             $result['address']['addressState'] = $this->fn_general->clear_null($profile['state_desc']);
             $result['roles'] = $arr_roles;
 
-
             if ($roleId == '5' || $roleId == '6') {
                 $groupId = Class_db::getInstance()->db_select_col('sys_user_group', array('user_id'=>$userId), null, 1);
                 $sys_group = Class_db::getInstance()->db_select_single('sys_group', array('group_id'=>$groupId), null, 1);
@@ -243,6 +242,59 @@ class Class_login {
             }
             //$result['menu'] = $fn_login->get_menu_list($arr_roles);        
             
+            return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0101', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    public function check_login_web ($username, $password) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering check_login()');
+            if (is_null($username) || $username === '') {
+                throw new Exception('(ErrCode:0108) [' . __LINE__ . '] - User ID is empty', 31);
+            }
+            if (is_null($password) || $password === '') {
+                throw new Exception('(ErrCode:0109) [' . __LINE__ . '] - Password is empty', 31);
+            }
+
+            $profile = Class_db::getInstance()->db_select_single('vw_profile', array('user_name'=>$username));
+            if (empty($profile)) {
+                throw new Exception('(ErrCode:0111) [' . __LINE__ . '] - User ID is not exist', 31);
+            }
+            if ($profile['user_password'] !== md5($password)) {
+                throw new Exception('(ErrCode:0112) [' . __LINE__ . '] - Password is incorrect', 31);
+            }
+            if ($profile['user_status'] !== '1') {
+                throw new Exception('(ErrCode:0113) [' . __LINE__ . '] - User ID is not active. Please contact Administrator to activate.', 31);
+            }
+
+            $userId = $profile['user_id'];
+            $result = array();
+
+            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array('sys_user_role.user_id'=>$userId));
+
+            $token = $this->create_jwt($userId, $username);
+
+            $result['token'] = $token;
+            $result['userId'] = $userId;
+            $result['userName'] = $username;
+            $result['userFirstName'] = $profile['user_first_name'];
+            $result['userLastName'] = $profile['user_last_name'];
+            $result['userType'] = $profile['user_type'];
+            $result['userMykadNo'] = $this->fn_general->clear_null($profile['user_mykad_no']);
+            $result['userEmail'] = $profile['user_email'];
+            $result['userContactNo'] = $profile['user_contact_no'];
+            $result['isFirstTime'] = is_null($profile['user_time_activate']) ? 'Yes' : 'No';
+            $result['address']['addressDesc'] = $this->fn_general->clear_null($profile['address_desc']);
+            $result['address']['addressPostcode'] = $this->fn_general->clear_null($profile['address_postcode']);
+            $result['address']['addressCity'] = $this->fn_general->clear_null($profile['address_city']);
+            $result['address']['addressState'] = $this->fn_general->clear_null($profile['state_desc']);
+            $result['roles'] = $arr_roles;
+
+            $result['menu'] = $this->get_menu_list($arr_roles);
+
             return $result;
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());

@@ -25,14 +25,21 @@ try {
         Class_db::getInstance()->db_beginTransaction();
         $is_transaction = true;        
         
-        if ($action === 'login') {  
+        if ($action === 'login') {
             $username = filter_input(INPUT_POST, 'username');
             $password = filter_input(INPUT_POST, 'password');
             $roleId = filter_input(INPUT_POST, 'roleId');
 
             $result = $fn_login->check_login($username, $password, $roleId);
             $fn_general->save_audit('1', $result['userId']);
-        }     
+        }
+        else if ($action === 'login_web') {
+            $username = filter_input(INPUT_POST, 'username');
+            $password = filter_input(INPUT_POST, 'password');
+
+            $result = $fn_login->check_login_web($username, $password);
+            $fn_general->save_audit('1', $result['userId']);
+        }
         else if ($action === 'forgot_password') {      
             $username = filter_input(INPUT_POST, 'username');   
             $userId = $fn_user->forgot_password($username);
