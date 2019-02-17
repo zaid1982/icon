@@ -15,7 +15,8 @@ $result = '';
 /* Error code range - 2000 */ 
 try {   
     Class_db::getInstance()->db_connect();
-    $request_method = filter_input(INPUT_SERVER, 'REQUEST_METHOD'); 
+    //$request_method = filter_input(INPUT_SERVER, 'REQUEST_METHOD');
+    $request_method = $_SERVER['REQUEST_METHOD'];
     $fn_general->log_debug($api_name, __LINE__, 'Request method = '.$request_method);
     
     if ('POST' === $request_method) {
@@ -27,9 +28,9 @@ try {
         if ($action === 'login') {  
             $username = filter_input(INPUT_POST, 'username');
             $password = filter_input(INPUT_POST, 'password');
-            $roleType = filter_input(INPUT_POST, 'roleType');
+            $roleId = filter_input(INPUT_POST, 'roleId');
 
-            $result = $fn_login->check_login($username, $password, $roleType);
+            $result = $fn_login->check_login($username, $password, $roleId);
             $fn_general->save_audit('1', $result['userId']);
         }     
         else if ($action === 'forgot_password') {      

@@ -1,25 +1,28 @@
 <?php
 
-class Class_sql {
-     
+class Class_sql
+{
+
     function __construct()
     {
         // 1010 - 1019
     }
-    
-    private function get_exception($codes, $function, $line, $msg) {
-        if ($msg != '') {            
-            $pos = strpos($msg,'-');
-            if ($pos !== false)   
-                $msg = substr($msg, $pos+2); 
-            return "(ErrCode:".$codes.") [".__CLASS__.":".$function.":".$line."] - ".$msg;
+
+    private function get_exception($codes, $function, $line, $msg)
+    {
+        if ($msg != '') {
+            $pos = strpos($msg, '-');
+            if ($pos !== false)
+                $msg = substr($msg, $pos + 2);
+            return "(ErrCode:" . $codes . ") [" . __CLASS__ . ":" . $function . ":" . $line . "] - " . $msg;
         } else
-            return "(ErrCode:".$codes.") [".__CLASS__.":".$function.":".$line."]";
+            return "(ErrCode:" . $codes . ") [" . __CLASS__ . ":" . $function . ":" . $line . "]";
     }
-    
-    public function get_sql ($title) {
-        try { 
-            if ($title == 'vw_profile') { 
+
+    public function get_sql($title)
+    {
+        try {
+            if ($title == 'vw_profile') {
                 $sql = "SELECT
                     sys_user.*,
                     sys_user_profile.user_contact_no,
@@ -32,16 +35,15 @@ class Class_sql {
                 LEFT JOIN sys_user_profile ON sys_user_profile.user_id = sys_user.user_id
                 LEFT JOIN sys_address ON sys_address.address_id = sys_user_profile.address_id
                 LEFT JOIN ref_state ON ref_state.state_id = sys_address.state_id";
-            } 
-            else if ($title == 'vw_roles') { 
+            } else if ($title == 'vw_roles') {
                 $sql = "SELECT
+                    sys_user_role.user_id AS user_id,
                     ref_role.role_id AS roleId, 
                     ref_role.role_desc AS roleDesc, 
                     ref_role.role_type AS roleType
                 FROM sys_user_role
                 INNER JOIN ref_role ON sys_user_role.role_id = ref_role.role_id AND role_status = 1";
-            } 
-            else if ($title === 'vw_menu') { 
+            } else if ($title === 'vw_menu') {
                 $sql = "SELECT 
                     sys_nav.nav_id,
                     sys_nav.nav_desc,
@@ -60,8 +62,7 @@ class Class_sql {
                 LEFT JOIN sys_nav_second ON sys_nav_second.nav_second_id = nav_role.nav_second_id
                 WHERE nav_status = 1  AND (ISNULL(sys_nav_second.nav_second_id) OR nav_second_status = 1)
                 ORDER BY nav_role.turn";
-            } 
-            else if ($title === 'dt_sem_company') { 
+            } else if ($title === 'dt_sem_company') {
                 $sql = "SELECT
                     sem_company.*,
                     sys_address.address_desc,
@@ -70,31 +71,32 @@ class Class_sql {
                     sys_address.city_id
                 FROM sem_company
                 LEFT JOIN sys_address ON sys_address.address_id = sem_company.address_id";
-            } 
-            else if ($title === 'vw_company_by_state') { 
+            } else if ($title === 'vw_company_by_state') {
                 $sql = "SELECT
                     sys_address.state_id, COUNT(*) AS total
                 FROM sem_company
                 LEFT JOIN sys_address ON sys_address.address_id = sem_company.address_id
                 GROUP BY sys_address.state_id";
-            } 
-            else if ($title === 'vw_company_stats') { 
+            } else if ($title === 'vw_company_stats') {
                 $sql = "SELECT 
                     COUNT(*) AS total,
                     SUM(IF(company_status = 1, 1, 0)) AS total_active,
                     SUM(IF(company_created_by IS NULL, 1, 0)) AS total_spdp
                 FROM sem_company";
             } else {
-                throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : '.$title)); 
+                throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }
             return $sql;
-        }
-        catch(Exception $e) {
-            if ($e->getCode() == 30) { $errCode = 32; } else { $errCode = $e->getCode(); }
+        } catch (Exception $e) {
+            if ($e->getCode() == 30) {
+                $errCode = 32;
+            } else {
+                $errCode = $e->getCode();
+            }
             throw new Exception($this->get_exception('0099', __FUNCTION__, __LINE__, $e->getMessage()), $errCode);
         }
     }
-    
+
 }
 
 ?>

@@ -175,11 +175,11 @@ class Class_login {
     /**
      * @param $username
      * @param $password
-     * @param $roleType
+     * @param $roleId
      * @return array
      * @throws Exception
      */
-    public function check_login ($username, $password, $roleType) {
+    public function check_login ($username, $password, $roleId) {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering check_login()');
             if (is_null($username) || $username === '') { 
@@ -188,8 +188,8 @@ class Class_login {
             if (is_null($password) || $password === '') { 
                 throw new Exception('(ErrCode:0109) [' . __LINE__ . '] - Password is empty', 31);         
             }
-            if (is_null($roleType) || $roleType === '') {
-                throw new Exception('(ErrCode:0110) [' . __LINE__ . '] - Role Type is empty');
+            if (is_null($roleId) || $roleId === '') {
+                throw new Exception('(ErrCode:0110) [' . __LINE__ . '] - Role ID is empty');
             }
 
             $profile = Class_db::getInstance()->db_select_single('vw_profile', array('user_name'=>$username));
@@ -205,12 +205,11 @@ class Class_login {
 
             $userId = $profile['user_id'];
             $result = array();
-            $arr_roleType = array('', 'complainer', 'internal', 'contractor');
-            
-            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array('sys_user_role.user_id'=>$userId, 'ref_role.role_type'=>$roleType));
-            if (empty($arr_roles)) {
-                throw new Exception('(ErrCode:0114) [' . __LINE__ . '] - User ID not exist as '.$arr_roleType[$roleType], 31);
+
+            if (Class_db::getInstance()->db_count('sys_user_role', array('user_id'=>$userId, 'role_id'=>$roleId)) == 0) {
+                throw new Exception('(ErrCode:0114) [' . __LINE__ . '] - User ID not exist', 31);
             }
+            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array('sys_user_role.user_id'=>$userId));
 
             $token = $this->create_jwt($userId, $username);
 
@@ -231,7 +230,7 @@ class Class_login {
             $result['roles'] = $arr_roles;
 
 
-            if ($roleType == '3') {
+            if ($roleId == '5' || $roleId == '6') {
                 $groupId = Class_db::getInstance()->db_select_col('sys_user_group', array('user_id'=>$userId), null, 1);
                 $sys_group = Class_db::getInstance()->db_select_single('sys_group', array('group_id'=>$groupId), null, 1);
                 $result['group']['groupId'] = $sys_group['group_id'];
