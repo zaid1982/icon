@@ -58,7 +58,7 @@ try {
     if ($ex->getCode() === 31) {
         $form_data['errmsg'] = substr($ex->getMessage(), strpos($ex->getMessage(), '] - ') + 4);
     } else {
-        $form_data['errmsg'] = 'Error occured. Please contact Administrator!';
+        $form_data['errmsg'] = 'Error on system. Please contact Administrator!';
     }
     $fn_general->log_error($api_name, __LINE__, $ex->getMessage());
 }
