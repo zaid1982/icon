@@ -1,5 +1,6 @@
 <?php
-require_once 'f_general.php';
+require_once 'library/constant.php';
+require_once 'function/f_general.php';
 require_once 'src/BeforeValidException.php';
 require_once 'src/ExpiredException.php';
 require_once 'src/SignatureInvalidException.php';
@@ -180,34 +181,35 @@ class Class_login {
      * @throws Exception
      */
     public function check_login ($username, $password, $roleId) {
+        $constant = new Class_constant();
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering check_login()');
             if (is_null($username) || $username === '') { 
-                throw new Exception('(ErrCode:0108) [' . __LINE__ . '] - User ID is empty', 31);         
+                throw new Exception('(ErrCode:0108) [' . __LINE__ . '] - Parameter username empty');
             } 
             if (is_null($password) || $password === '') { 
-                throw new Exception('(ErrCode:0109) [' . __LINE__ . '] - Password is empty', 31);         
+                throw new Exception('(ErrCode:0109) [' . __LINE__ . '] - Parameter password empty');
             }
             if (is_null($roleId) || $roleId === '') {
-                throw new Exception('(ErrCode:0110) [' . __LINE__ . '] - Role ID is empty');
+                throw new Exception('(ErrCode:0110) [' . __LINE__ . '] - Parameter  roleId empty');
             }
 
             $profile = Class_db::getInstance()->db_select_single('vw_profile', array('user_name'=>$username));
             if (empty($profile)) {
-                throw new Exception('(ErrCode:0111) [' . __LINE__ . '] - User ID is not exist', 31);
+                throw new Exception('(ErrCode:0111) [' . __LINE__ . '] - '.$constant::ERR_LOGIN_NOT_EXIST, 31);
             } 
             if ($profile['user_password'] !== md5($password)) {
-                throw new Exception('(ErrCode:0112) [' . __LINE__ . '] - Password is incorrect', 31);
+                throw new Exception('(ErrCode:0112) [' . __LINE__ . '] - '.$constant::ERR_LOGIN_WRONG_PASSWORD, 31);
             } 
             if ($profile['user_status'] !== '1') {
-                throw new Exception('(ErrCode:0113) [' . __LINE__ . '] - User ID is not active. Please contact Administrator to activate.', 31);
+                throw new Exception('(ErrCode:0113) [' . __LINE__ . '] - '.$constant::ERR_LOGIN_NOT_ACTIVE, 31);
             }
 
             $userId = $profile['user_id'];
             $result = array();
 
             if (Class_db::getInstance()->db_count('sys_user_role', array('user_id'=>$userId, 'role_id'=>$roleId)) == 0) {
-                throw new Exception('(ErrCode:0114) [' . __LINE__ . '] - User ID not exist', 31);
+                throw new Exception('(ErrCode:0114) [' . __LINE__ . '] - '.$constant::ERR_LOGIN_NOT_EXIST, 31);
             }
             $arr_roles = Class_db::getInstance()->db_select('vw_roles', array('sys_user_role.user_id'=>$userId));
 
@@ -250,24 +252,25 @@ class Class_login {
     }
 
     public function check_login_web ($username, $password) {
+        $constant = new Class_constant();
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering check_login()');
             if (is_null($username) || $username === '') {
-                throw new Exception('(ErrCode:0108) [' . __LINE__ . '] - User ID is empty', 31);
+                throw new Exception('(ErrCode:0108) [' . __LINE__ . '] - Parameter username empty');
             }
             if (is_null($password) || $password === '') {
-                throw new Exception('(ErrCode:0109) [' . __LINE__ . '] - Password is empty', 31);
+                throw new Exception('(ErrCode:0109) [' . __LINE__ . '] - Parameter password empty');
             }
 
             $profile = Class_db::getInstance()->db_select_single('vw_profile', array('user_name'=>$username));
             if (empty($profile)) {
-                throw new Exception('(ErrCode:0111) [' . __LINE__ . '] - User ID is not exist', 31);
+                throw new Exception('(ErrCode:0111) [' . __LINE__ . '] - '.$constant::ERR_LOGIN_NOT_EXIST, 31);
             }
             if ($profile['user_password'] !== md5($password)) {
-                throw new Exception('(ErrCode:0112) [' . __LINE__ . '] - Password is incorrect', 31);
+                throw new Exception('(ErrCode:0112) [' . __LINE__ . '] - '.$constant::ERR_LOGIN_WRONG_PASSWORD, 31);
             }
             if ($profile['user_status'] !== '1') {
-                throw new Exception('(ErrCode:0113) [' . __LINE__ . '] - User ID is not active. Please contact Administrator to activate.', 31);
+                throw new Exception('(ErrCode:0113) [' . __LINE__ . '] - '.$constant::ERR_LOGIN_NOT_ACTIVE, 31);
             }
 
             $userId = $profile['user_id'];

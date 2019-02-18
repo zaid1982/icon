@@ -153,6 +153,7 @@ class Class_user {
     }
     
     public function forgot_password ($userName='') {
+        $constant = new Class_constant();
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering forgot_password()');
             if (empty($userName)) {
@@ -161,7 +162,7 @@ class Class_user {
             
             $sys_user = Class_db::getInstance()->db_select_single('sys_user', array('user_name'=>$userName));
             if (empty($sys_user)) {
-                throw new Exception('(ErrCode:0217) [' . __LINE__ . '] - User ID not exist', 31);
+                throw new Exception('(ErrCode:0217) [' . __LINE__ . '] - '.$constant::ERR_FORGOT_PASSWORD_NOT_EXIST, 31);
             }
             
             $userId = $sys_user['user_id'];
@@ -222,6 +223,7 @@ class Class_user {
     }
     
     public function change_password ($userId, $put_vars) {
+        $constant = new Class_constant();
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering change_password()');
             
@@ -239,7 +241,7 @@ class Class_user {
             $newPassword = $put_vars['newPassword'];
             
             if (Class_db::getInstance()->db_count('sys_user', array('user_password'=>md5($oldPassword), 'user_id'=>$userId)) == 0) {
-                throw new Exception('(ErrCode:0227) [' . __LINE__ . '] - Current Password is incorrect', 31);                     
+                throw new Exception('(ErrCode:0227) [' . __LINE__ . '] - '.$constant::ERR_CHANGE_PASSWORD_WRONG_CURRENT, 31);
             }
                         
             Class_db::getInstance()->db_update('sys_user', array('user_password'=>md5($newPassword)), array('user_id'=>$userId));

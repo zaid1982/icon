@@ -1,9 +1,11 @@
 <?php
+require_once 'library/constant.php';
 require_once 'function/db.php';
 require_once 'function/f_general.php';
 require_once 'function/f_login.php';
 require_once 'function/f_user.php';
 
+$constant = new Class_constant();
 $fn_general = new Class_general();
 $fn_login = new Class_login();
 $fn_user = new Class_user();
@@ -41,9 +43,11 @@ try {
             $fn_general->save_audit('1', $result['userId']);
         }
         else if ($action === 'forgot_password') {      
-            $username = filter_input(INPUT_POST, 'username');   
+            $username = filter_input(INPUT_POST, 'username');
+
             $userId = $fn_user->forgot_password($username);
-            $fn_general->save_audit('4', $userId); 
+            $fn_general->save_audit('4', $userId);
+            $form_data['errmsg'] = $constant::SUC_FORGOT_PASSWORD;
         } else {
             throw new Exception('(ErrCode:2001) [' . __LINE__ . '] - Parameter action ('.$action.') invalid'); 
         }
@@ -65,7 +69,7 @@ try {
     if ($ex->getCode() === 31) {
         $form_data['errmsg'] = substr($ex->getMessage(), strpos($ex->getMessage(), '] - ') + 4);
     } else {
-        $form_data['errmsg'] = 'Error on system. Please contact Administrator!';
+        $form_data['errmsg'] = $constant::ERR_DEFAULT;
     }
     $fn_general->log_error($api_name, __LINE__, $ex->getMessage());
 }

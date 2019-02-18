@@ -1,9 +1,11 @@
 <?php
+require_once 'library/constant.php';
 require_once 'function/db.php';
 require_once 'function/f_general.php';
 require_once 'function/f_login.php';
 require_once 'function/f_user.php';
 
+$constant = new Class_constant();
 $fn_general = new Class_general();
 $fn_login = new Class_login();
 $fn_user = new Class_user();
@@ -41,6 +43,7 @@ try {
         else if ($action === 'password') {
             $fn_user->change_password($userId, $put_vars);  
             $fn_general->save_audit('6', $userId);
+            $form_data['errmsg'] = $constant::SUC_CHANGE_PASSWORD;
         }
         
         Class_db::getInstance()->db_commit();        
@@ -59,7 +62,7 @@ try {
     if ($ex->getCode() === 31) {
         $form_data['errmsg'] = substr($ex->getMessage(), strpos($ex->getMessage(), '] - ') + 4);
     } else {
-        $form_data['errmsg'] = 'Error occured. Please contact Administrator!';
+        $form_data['errmsg'] = $constant::ERR_DEFAULT;
     }
     $fn_general->log_error($api_name, __LINE__, $ex->getMessage());
 }
