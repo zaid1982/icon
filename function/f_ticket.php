@@ -228,5 +228,25 @@ class Class_ticket {
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    /**
+     * @param $ticketId
+     * @throws Exception
+     */
+    public function submit_ticket ($ticketId) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering submit_ticket()');
+
+            if (empty($ticketId)) {
+                throw new Exception('(ErrCode:0511) [' . __LINE__ . '] - Parameter ticketId empty');
+            }
+
+            Class_db::getInstance()->db_update('icn_ticket', array('ticket_status'=>'11'), array('ticket_id'=>$ticketId));
+        }
+        catch(Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }
 
