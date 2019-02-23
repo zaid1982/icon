@@ -8,6 +8,8 @@
 
 class Class_constant {
 
+    const URL = '//localhost/icon/';
+
     const ERR_DEFAULT = 'Error on system. Please contact Administrator!';
     const ERR_LOGIN_NOT_EXIST = 'User ID not exist';
     const ERR_LOGIN_WRONG_PASSWORD = 'Password is incorrect';

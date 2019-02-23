@@ -18,7 +18,13 @@ $result = '';
 try {   
     Class_db::getInstance()->db_connect();
     $request_method = filter_input(INPUT_SERVER, 'REQUEST_METHOD'); 
-    $fn_general->log_debug($api_name, __LINE__, 'Request method = '.$request_method);   
+    $fn_general->log_debug($api_name, __LINE__, 'Request method = '.$request_method);
+
+    $headers = apache_request_headers();
+    if (!isset($headers['Authorization'])) {
+        throw new Exception('(ErrCode:2101) [' . __LINE__ . '] - Parameter Authorization empty');
+    }
+    $jwt_data = $fn_login->check_jwt($headers['Authorization']);
     
     if ('PUT' === $request_method) {  
         $userId = filter_input(INPUT_GET, 'userId'); 
@@ -38,16 +44,17 @@ try {
         
         if ($action === 'profile') {
             $fn_user->update_profile($userId, $put_vars);  
-            $fn_general->save_audit('5', $userId);
+            $fn_general->save_audit('5', $jwt_data->userId);
         } 
         else if ($action === 'password') {
             $fn_user->change_password($userId, $put_vars);  
-            $fn_general->save_audit('6', $userId);
+            $fn_general->save_audit('6', $jwt_data->userId);
             $form_data['errmsg'] = $constant::SUC_CHANGE_PASSWORD;
         }
         
         Class_db::getInstance()->db_commit();        
-        Class_db::getInstance()->db_close();        
+        Class_db::getInstance()->db_close();
+        $form_data['result'] = $result;
         $form_data['success'] = true;      
     } else {
         throw new Exception('(ErrCode:2100) [' . __LINE__ . '] - Wrong Request Method');   

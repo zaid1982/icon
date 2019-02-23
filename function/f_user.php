@@ -1,6 +1,7 @@
 <?php
-require_once 'f_general.php';
-require_once 'f_email.php';
+require_once 'library/constant.php';
+require_once 'function/f_general.php';
+require_once 'function/f_email.php';
 
 /* Error code range - 0200 */ 
 class Class_user {

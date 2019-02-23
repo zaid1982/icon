@@ -1,5 +1,7 @@
 <?php
 
+require_once 'library/constant.php';
+
 class Class_general {
      
     private $log_dir = '';
@@ -21,7 +23,12 @@ class Class_general {
             return "(ErrCode:".$codes.") [".__CLASS__.":".$function.":".$line."]";
         }
     }
-    
+
+    /**
+     * @param $property
+     * @return mixed
+     * @throws Exception
+     */
     public function __get($property) {
         if (property_exists($this, $property)) {
             return $this->$property;
@@ -30,41 +37,71 @@ class Class_general {
         }
     }
 
-    public function __set( $property, $value ) {
+    /**
+     * @param $property
+     * @param $value
+     * @throws Exception
+     */
+    public function __set($property, $value ) {
         if (property_exists($this, $property)) {
             $this->$property = $value;        
         } else {
             throw new Exception($this->get_exception('0002', __FUNCTION__, __LINE__, 'Get Property not exist ['.$property.']'));
         }
     }
-    
-    public function __isset( $property ) {
+
+    /**
+     * @param $property
+     * @return bool
+     * @throws Exception
+     */
+    public function __isset($property ) {
         if (property_exists($this, $property)) {
             return isset($this->$property);
         } else {
             throw new Exception($this->get_exception('0003', __FUNCTION__, __LINE__, 'Get Property not exist ['.$property.']'));
         }
     }
-    
-    public function __unset( $property ) {
+
+    /**
+     * @param $property
+     * @throws Exception
+     */
+    public function __unset($property ) {
         if (property_exists($this, $property)) {
             unset($this->$property);
         } else {
             throw new Exception($this->get_exception('0004', __FUNCTION__, __LINE__, 'Get Property not exist ['.$property.']'));
         }
     }
-           
+
+    /**
+     * @param $function
+     * @param $line
+     * @param $msg
+     */
     public function log_debug ($function, $line, $msg) {
         $debugMsg = date("Y/m/d h:i:sa")." [".__CLASS__.":".$function.":".$line."] - ".$msg."\r\n";
         error_log($debugMsg, 3, $this->log_dir.'/debug/debug_'.date("Ymd").'.log');
     }
-    
+
+    /**
+     * @param $function
+     * @param $line
+     * @param $msg
+     */
     public function log_error ($function, $line, $msg) {
         $debugMsg = date("Y/m/d h:i:sa")." [".__CLASS__.":".$function.":".$line."] - ".$msg."\r\n";
         error_log($debugMsg, 3, $this->log_dir.'/debug/debug_'.date("Ymd").'.log');
         error_log($debugMsg, 3, $this->log_dir.'/error/error_'.date("Ymd").'.log');
     }
-    
+
+    /**
+     * @param $param
+     * @param string $replaced
+     * @return string
+     * @throws Exception
+     */
     public function clear_null ($param, $replaced='') {
         try {
             if (is_null($param)) {
@@ -76,7 +113,14 @@ class Class_general {
             throw new Exception($this->get_exception('0051', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
+
+    /**
+     * @param string $audit_action_id
+     * @param string $user_id
+     * @param string $remark
+     * @return mixed
+     * @throws Exception
+     */
     public function save_audit ($audit_action_id='', $user_id='', $remark='') {
         try {
             $this->log_debug(__FUNCTION__, __LINE__, 'Entering save_audit()');
@@ -85,7 +129,6 @@ class Class_general {
             }
             
             $place = '';
-            $ipaddress = '';
             
             if (isset($_SERVER['HTTP_CLIENT_IP']) && $_SERVER['HTTP_CLIENT_IP']!='') {
                 $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
@@ -115,7 +158,12 @@ class Class_general {
             throw new Exception($this->get_exception('0051', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
+
+    /**
+     * @param int $length
+     * @return string
+     * @throws Exception
+     */
     public function generateRandomString ($length = 20) {
         try {
             $this->log_debug(__FUNCTION__, __LINE__, 'Entering generateRandomString()');
@@ -131,7 +179,11 @@ class Class_general {
             throw new Exception($this->get_exception('0051', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
+
+    /**
+     * @param string $versionId
+     * @throws Exception
+     */
     public function updateVersion ($versionId='') {
         try {
             $this->log_debug(__FUNCTION__, __LINE__, 'Entering updateVersion()');
@@ -144,13 +196,24 @@ class Class_general {
             throw new Exception($this->get_exception('0051', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
+
+    /**
+     * @param $folder
+     * @return bool|string
+     */
     public function folderExist($folder) {
         $path = realpath($folder);
         return ($path !== false AND is_dir($path)) ? $path : false;
     }
-    
-    public function uploadDocument ($uploadDetails='', $documentId='' , $userId='') {
+
+    /**
+     * @param string $uploadDetails
+     * @param string $documentId
+     * @param string $userId
+     * @return mixed
+     * @throws Exception
+     */
+    public function uploadDocument ($uploadDetails, $documentId, $userId) {
         try {
             $this->log_debug(__FUNCTION__, __LINE__, 'Entering uploadDocument()');
             
@@ -162,29 +225,33 @@ class Class_general {
             } 
             if (empty($userId)) {
                 throw new Exception('(ErrCode:0056) [' . __LINE__ . '] - Parameter userId empty');   
-            } 
-            
-            if (!array_key_exists('name', $uploadDetails) || empty($uploadDetails['name'])) {
-                throw new Exception('(ErrCode:0057) [' . __LINE__ . '] - Parameter upload name empty');  
+            }
+
+            if (!array_key_exists('name', $uploadDetails)) {
+                throw new Exception('(ErrCode:0057) [' . __LINE__ . '] - Parameter upload name not exist');
+            }
+            if (!array_key_exists('filename', $uploadDetails) || empty($uploadDetails['filename'])) {
+                throw new Exception('(ErrCode:0058) [' . __LINE__ . '] - Parameter upload filename empty');
             }
             if (!array_key_exists('size', $uploadDetails) || empty($uploadDetails['size'])) {
-                throw new Exception('(ErrCode:0058) [' . __LINE__ . '] - Parameter upload size empty');  
+                throw new Exception('(ErrCode:0059) [' . __LINE__ . '] - Parameter upload size empty');
             }
             if (!array_key_exists('type', $uploadDetails) || empty($uploadDetails['type'])) {
-                throw new Exception('(ErrCode:0059) [' . __LINE__ . '] - Parameter upload type empty');  
+                throw new Exception('(ErrCode:0060) [' . __LINE__ . '] - Parameter upload type empty');
             }
             if (!array_key_exists('data', $uploadDetails) || empty($uploadDetails['data'])) {
-                throw new Exception('(ErrCode:0060) [' . __LINE__ . '] - Parameter upload data empty');  
+                throw new Exception('(ErrCode:0061) [' . __LINE__ . '] - Parameter upload data empty');
             }
-            
-            $uploadUplname = $uploadDetails['name']; 
+
+            $uploadName = $uploadDetails['name'];
+            $uploadUplname = $uploadDetails['filename'];
             $uploadFilesize = $uploadDetails['size']; 
             $uploadBlobType = $uploadDetails['type']; 
             $uploadBlobData = $uploadDetails['data'];             
             $pos = strrpos($uploadUplname,'.');
             $uploadExtension = $pos !== false ? substr($uploadUplname, $pos+1) : ' - '; 
             
-            $uploadId = Class_db::getInstance()->db_insert('sys_upload', array('document_id'=>$documentId, 'upload_uplname'=>$uploadUplname, 'upload_filesize'=>$uploadFilesize, 'upload_blob_type'=>$uploadBlobType,
+            $uploadId = Class_db::getInstance()->db_insert('sys_upload', array('document_id'=>$documentId, 'upload_name'=>$uploadName, 'upload_uplname'=>$uploadUplname, 'upload_filesize'=>$uploadFilesize, 'upload_blob_type'=>$uploadBlobType,
                 'upload_blob_data'=>$uploadBlobData, 'upload_extension'=>$uploadExtension, 'upload_created_by'=>$userId));
             $uploadFilename = 'f_'.(10000 + intval($uploadId));
             $uploadFolder = 'upload/'.$documentId.'/'.(floor(intval($uploadId)/1000));
@@ -200,8 +267,14 @@ class Class_general {
             throw new Exception($this->get_exception('0051', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
+
+    /**
+     * @param string $uploadId
+     * @return array
+     * @throws Exception
+     */
     public function getDocument ($uploadId='') {
+        $constant = new Class_constant();
         try {
             $this->log_debug(__FUNCTION__, __LINE__, 'Entering getDocument()');            
             if (empty($uploadId)) {
@@ -215,14 +288,19 @@ class Class_general {
                 array(
                     'documentDesc'=>$document['document_desc'], 
                     'documentFilename'=>$sysUpload['upload_uplname'],
-                    'documentSrc'=>'//localhost/spdp/seminar/api/'.$sysUpload['upload_folder'].'/'.$sysUpload['upload_filename'].'.'.$sysUpload['upload_extension']
+                    'documentSrc'=>$constant::URL.$sysUpload['upload_folder'].'/'.$sysUpload['upload_filename'].'.'.$sysUpload['upload_extension']
                 );            
         } catch(Exception $ex) {
             $this->log_error(__FUNCTION__, __LINE__, $ex->getMessage());            
             throw new Exception($this->get_exception('0051', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-        
+
+    /**
+     * @param string $date
+     * @return string
+     * @throws Exception
+     */
     public function convertMysqlDate ($date='') {
         try {
             $this->log_debug(__FUNCTION__, __LINE__, 'Entering convertMysqlDate()');            

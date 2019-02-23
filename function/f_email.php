@@ -1,5 +1,6 @@
 <?php
-require_once 'f_general.php';
+require_once 'library/constant.php';
+require_once 'function/f_general.php';
 
 /* Error code range - 0300 */ 
 class Class_email {

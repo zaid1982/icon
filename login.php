@@ -52,10 +52,10 @@ try {
             throw new Exception('(ErrCode:2001) [' . __LINE__ . '] - Parameter action ('.$action.') invalid'); 
         }
         
-        Class_db::getInstance()->db_commit(); 
+        Class_db::getInstance()->db_commit();
         $form_data['result'] = $result;
         $form_data['success'] = true;
-        $fn_general->log_debug($api_name, __LINE__, 'Result = '.print_r($result, true));
+        //$fn_general->log_debug($api_name, __LINE__, 'Result = '.print_r($result, true));
     } else {
         throw new Exception('(ErrCode:2000) [' . __LINE__ . '] - Wrong Request Method');   
     }       
