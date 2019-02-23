@@ -125,7 +125,9 @@ class Class_task {
                 throw new Exception('(ErrCode:0409) [' . __LINE__ . '] - User ID ('.$userId.') is not allowed to perform this checkpoint ('.$checkpoint_id.')');
             }
 
-            $transactionId = Class_db::getInstance()->db_insert('wfl_transaction', array('transaction_no'=>$transactionNo, 'flow_id'=>$flowId, 'user_id'=>$userId, 'group_id'=>$groupId));
+            $flowDueDay = Class_db::getInstance()->db_select_single('wfl_flow', array('flow_id'=>$flowId), 'flow_due_day', null, 1);
+            $transactionId = Class_db::getInstance()->db_insert('wfl_transaction', array('transaction_no'=>$transactionNo, 'flow_id'=>$flowId, 'user_id'=>$userId, 'group_id'=>$groupId,
+                'transaction_date_due'=>'|Curdate()+'.$flowDueDay, 'transaction_status'=>'5'));
             Class_db::getInstance()->db_insert('wfl_task', array('transaction_id'=>$transactionId, 'checkpoint_id'=>$checkpoint_id));
             return $transactionId;
 
