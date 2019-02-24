@@ -60,7 +60,7 @@ class Class_sql
                     GROUP BY nav_id, nav_second_id) AS nav_role
                 LEFT JOIN sys_nav ON sys_nav.nav_id = nav_role.nav_id
                 LEFT JOIN sys_nav_second ON sys_nav_second.nav_second_id = nav_role.nav_second_id
-                WHERE nav_status = 1  AND (ISNULL(sys_nav_second.nav_second_id) OR nav_second_status = 1)
+                WHERE nav_status = 1 AND (ISNULL(sys_nav_second.nav_second_id) OR nav_second_status = 1)
                 ORDER BY nav_role.turn";
             } else if ($title === 'dt_sem_company') {
                 $sql = "SELECT
