@@ -89,7 +89,7 @@ try {
             $taskId = $fn_task->create_new_task('1', $jwt_data->userId, '3', '3', $ticketNo);
             $fn_ticket->update_ticket($ticketId, $put_vars, $jwt_data->userId);
             $fn_task->submit_task($taskId, $jwt_data->userId, $status='9');
-            $fn_ticket->submit_ticket($ticketId);
+            $fn_ticket->submit_ticket($ticketId, $ticketNo, $taskId);
             $fn_general->save_audit('9', $jwt_data->userId, 'ticket_no = '.$ticketNo);
             $form_data['errmsg'] = 'Your ticket has been successfully submitted. Your ticket number is '.$ticketNo.' for future reference.';
         } else {
@@ -97,6 +97,42 @@ try {
         }
 
         Class_db::getInstance()->db_commit();
+        $form_data['result'] = $result;
+        $form_data['success'] = true;
+    }
+    else if ('GET' === $request_method) {
+        $ticketId = filter_input(INPUT_GET, 'ticketId');
+        $result = array();
+
+        if (!is_null($ticketId)) {
+
+        }
+        else {
+            if (isset($headers['Simple'])) {
+                $tickets = Class_db::getInstance()->db_select('icn_ticket', array('ticket_status'=>'<>5'));
+                foreach ($tickets as $ticket) {
+                    $row_result['ticketId'] = $ticket['ticket_id'];
+                    $row_result['ticketNo'] = $fn_general->clear_null($ticket['ticket_no']);
+                    $row_result['problemtypeId'] = $ticket['problemtype_id'];
+                    $row_result['workcategoryId'] = $ticket['workcategory_id'];
+                    $row_result['transactionId'] = $ticket['transaction_id'];
+                    $row_result['ticketStatus'] = $ticket['ticket_status'];
+                    $row_result['ticketTimeSubmit'] = str_replace('-', '/', $ticket['ticket_time_submit']);
+                    array_push($result, $row_result);
+                }
+            }
+            else {
+                $tickets = Class_db::getInstance()->db_select('dt_ticket');
+                foreach ($tickets as $ticket) {
+                    $row_result['ticketId'] = $ticket['ticket_id'];
+                    $row_result['ticketNo'] = $fn_general->clear_null($ticket['ticket_no']);
+                    $row_result['ticketComplaint'] = $fn_general->clear_null($ticket['ticket_complaint']);
+                    $row_result['ticketStatus'] = $ticket['ticket_status'];
+                    array_push($result, $row_result);
+                }
+            }
+        }
+
         $form_data['result'] = $result;
         $form_data['success'] = true;
     } else {

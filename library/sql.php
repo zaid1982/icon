@@ -83,6 +83,8 @@ class Class_sql
                     SUM(IF(company_status = 1, 1, 0)) AS total_active,
                     SUM(IF(company_created_by IS NULL, 1, 0)) AS total_spdp
                 FROM sem_company";
+            } else if ($title === 'dt_ticket') {
+
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }

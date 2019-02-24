@@ -31,7 +31,7 @@ try {
         $name = $headers['Name'];    
             
         $result = array();
-        if ($name === 'status') {
+        if ($name === 'icon_status') {
             $arr_dataLocal = Class_db::getInstance()->db_select('ref_status');        
             foreach ($arr_dataLocal as $dataLocal) {
                 $row_result = array('statusId'=>'', 'statusDesc'=>'', 'statusColor'=>'', 'statusAction'=>'');
@@ -42,7 +42,7 @@ try {
                 array_push($result, $row_result);
             }  
         }        
-        else if ($name === 'state') {
+        else if ($name === 'icon_state') {
             $arr_dataLocal = Class_db::getInstance()->db_select('ref_state');        
             foreach ($arr_dataLocal as $dataLocal) {
                 $row_result = array('stateId'=>'', 'stateDesc'=>'', 'countryId'=>'', 'stateStatus'=>'');
@@ -53,7 +53,7 @@ try {
                 array_push($result, $row_result);
             }  
         }
-        else if ($name === 'city') {
+        else if ($name === 'icon_city') {
             $arr_dataLocal = Class_db::getInstance()->db_select('ref_city');
             foreach ($arr_dataLocal as $dataLocal) {
                 $row_result = array('cityId' => '', 'citiDesc' => '', 'stateId' => '', 'cityStatus' => '');
@@ -64,7 +64,7 @@ try {
                 array_push($result, $row_result);
             }
         }
-        else if ($name === 'problemtype') {
+        else if ($name === 'icon_problemtype') {
             $arr_dataLocal = Class_db::getInstance()->db_select('icn_problemtype');
             foreach ($arr_dataLocal as $dataLocal) {
                 $row_result = array('problemtypeId' => '', 'problemtypeDesc' => '', 'problemtypeStatus' => '');
@@ -74,7 +74,7 @@ try {
                 array_push($result, $row_result);
             }
         }
-        else if ($name === 'worktype') {
+        else if ($name === 'icon_worktype') {
             $arr_dataLocal = Class_db::getInstance()->db_select('icn_worktype');
             foreach ($arr_dataLocal as $dataLocal) {
                 $row_result = array('worktypeId'=>'', 'worktypeDesc'=>'', 'worktypeStatus'=>'');
@@ -84,7 +84,7 @@ try {
                 array_push($result, $row_result);
             }
         }
-        else if ($name === 'workcategory') {
+        else if ($name === 'icon_workcategory') {
             $arr_dataLocal = Class_db::getInstance()->db_select('icn_workcategory');
             foreach ($arr_dataLocal as $dataLocal) {
                 $row_result = array('workcategoryId'=>'', 'workcategoryDesc'=>'', 'worktypeId'=>'', 'workcategoryStatus'=>'');

@@ -96,10 +96,10 @@ class Class_task {
             $checkpointRole = $checkpoint['role_id'];
             $checkpointGroup = $checkpoint['group_id'];
 
-            if (!is_null($checkpointRole) && $roleId !== '' && $checkpointRole != $roleId) {
+            if (!empty($checkpointRole) && $roleId !== '' && $checkpointRole != $roleId) {
                 throw new Exception('(ErrCode:0407) [' . __LINE__ . '] - Role ID ('.$roleId.') is not allowed to perform this checkpoint ('.$checkpointId.')');
             }
-            if (!is_null($checkpointGroup) && $groupId !== '' && $checkpointGroup != $groupId) {
+            if (!empty($checkpointGroup) && $groupId !== '' && $checkpointGroup != $groupId) {
                 throw new Exception('(ErrCode:0408) [' . __LINE__ . '] - Group ID ('.$groupId.') is not allowed to perform this checkpoint ('.$checkpointId.')');
             }
             if (Class_db::getInstance()->db_count('wfl_checkpoint_user', array('checkpoint_id'=>$checkpointId, 'user_id'=>$userId)) == 0) {
@@ -124,7 +124,7 @@ class Class_task {
             
             $checkpointId = $checkpoint['checkpoint_id'];
             
-            $checkpointAssigns = Class_db::getInstance()->db_select_single('wfl_checkpoint_assign', array('checkpoint_id'=>$checkpointId));
+            $checkpointAssigns = Class_db::getInstance()->db_select('wfl_checkpoint_assign', array('checkpoint_id'=>$checkpointId));
             foreach ($checkpointAssigns as $checkpointAssign) {
                 $assignType = $checkpointAssign['checkpoint_assign_type'];
                 $checkpointTo = $checkpointAssign['checkpoint_to'];
@@ -188,11 +188,11 @@ class Class_task {
 
             $this->check_next_task($checkpoint, $userId, $roleId, $groupId);
 
-            $flowDueDay = Class_db::getInstance()->db_select_single('wfl_flow', array('flow_id'=>$flowId), 'flow_due_day', null, 1);
+            $flowDueDay = Class_db::getInstance()->db_select_col('wfl_flow', array('flow_id'=>$flowId), 'flow_due_day', null, 1);
             $transactionId = Class_db::getInstance()->db_insert('wfl_transaction', array('transaction_no'=>$transactionNo, 'flow_id'=>$flowId, 'user_id'=>$userId, 'group_id'=>$groupId,
                 'transaction_date_due'=>'|Curdate() + INTERVAL '.$flowDueDay.' DAY', 'transaction_status'=>'5'));
 
-            $checkDueDay = !is_null($checkDueDay) ? '|Curdate() + INTERVAL '.$checkDueDay.' DAY' : '';
+            $checkDueDay = !empty($checkDueDay) ? '|Curdate() + INTERVAL '.$checkDueDay.' DAY' : '';
             $taskId = Class_db::getInstance()->db_insert('wfl_task', array('transaction_id'=>$transactionId, 'checkpoint_id'=>$checkpointId, 'role_id'=>$roleId, 'group_id'=>$groupId,
                 'task_created_user'=>$userId, 'task_created_group'=>$groupId, 'task_date_due'=>$checkDueDay, 'task_status'=>'5'));
 
@@ -231,7 +231,7 @@ class Class_task {
             $transactionId = $task['transaction_id'];
             $checkpointId = $task['checkpoint_id'];
             $roleId = $task['role_id'];
-            $groupId = is_null($task['group_id']) ? $groupId : $task['group_id'];
+            $groupId = empty($task['group_id']) ? $groupId : $task['group_id'];
             $taskClaimedUser = $task['task_claimed_user'];
 
             if (empty($roleId)) {
@@ -255,7 +255,7 @@ class Class_task {
             } else {
                 $arrUpdTask['task_claimed_user'] = $userId;
             }
-            Class_db::getInstance()->update('wfl_task', $arrUpdTask, array('task_id'=>$taskId));
+            Class_db::getInstance()->db_update('wfl_task', $arrUpdTask, array('task_id'=>$taskId));
 
             if (empty($next)) {
                 $nextPointId = Class_db::getInstance()->db_select_col('wfl_checkpoint', array('checkpoint_id'=>$checkpointId), 'checkpoint_next', null, 1);
@@ -288,7 +288,7 @@ class Class_task {
 
             $this->check_assign($checkpoint, $transactionId, $toGroup, $toUser);
 
-            $nextpointDueDay = !is_null($nextpointDueDay) ? '|Curdate() + INTERVAL '.$nextpointDueDay.' DAY' : '';
+            $nextpointDueDay = !empty($nextpointDueDay) ? '|Curdate() + INTERVAL '.$nextpointDueDay.' DAY' : '';
             $arrInsertTask = array('transaction_id'=>$transactionId, 'checkpoint_id'=>$nextPointId, 'role_id'=>$nextRoleId, 'task_created_user'=>$userId, 'task_created_group'=>$groupId,
                 'task_date_due'=>$nextpointDueDay, 'task_status_previous'=>$status, 'task_status'=>'8');
             if ($nextpointClaimType == '3') {

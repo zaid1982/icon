@@ -231,17 +231,26 @@ class Class_ticket {
 
     /**
      * @param $ticketId
+     * @param $ticketNo
+     * @param $taskId
      * @throws Exception
      */
-    public function submit_ticket ($ticketId) {
+    public function submit_ticket ($ticketId, $ticketNo, $taskId) {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering submit_ticket()');
 
             if (empty($ticketId)) {
                 throw new Exception('(ErrCode:0511) [' . __LINE__ . '] - Parameter ticketId empty');
             }
+            if (empty($ticketNo)) {
+                throw new Exception('(ErrCode:0517) [' . __LINE__ . '] - Parameter ticketNo empty');
+            }
+            if (empty($taskId)) {
+                throw new Exception('(ErrCode:0518) [' . __LINE__ . '] - Parameter taskId empty');
+            }
 
-            Class_db::getInstance()->db_update('icn_ticket', array('ticket_status'=>'11'), array('ticket_id'=>$ticketId));
+            $transactionId = Class_db::getInstance()->db_select_col('wfl_task', array('task_id'=>$taskId), 'transaction_id', null, 1);
+            Class_db::getInstance()->db_update('icn_ticket', array('ticket_no'=>$ticketNo, 'transaction_id'=>$transactionId, 'ticket_status'=>'11'), array('ticket_id'=>$ticketId));
         }
         catch(Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
