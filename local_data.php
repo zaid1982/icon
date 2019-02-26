@@ -3,10 +3,12 @@ require_once 'library/constant.php';
 require_once 'function/db.php';
 require_once 'function/f_general.php';
 require_once 'function/f_login.php';
+require_once 'function/f_reference.php';
 
 $constant = new Class_constant();
 $fn_general = new Class_general();
 $fn_login = new Class_login();
+$fn_reference = new Class_reference();
 $api_name = 'api_local_data';
 $is_transaction = false;
 $form_data = array('success'=>false, 'result'=>'', 'error'=>'', 'errmsg'=>'');
@@ -65,14 +67,7 @@ try {
             }
         }
         else if ($name === 'icon_problemtype') {
-            $arr_dataLocal = Class_db::getInstance()->db_select('icn_problemtype');
-            foreach ($arr_dataLocal as $dataLocal) {
-                $row_result = array('problemtypeId' => '', 'problemtypeDesc' => '', 'problemtypeStatus' => '');
-                $row_result['problemtypeId'] = $dataLocal['problemtype_id'];
-                $row_result['problemtypeDesc'] = $dataLocal['problemtype_desc'];
-                $row_result['problemtypeStatus'] = $dataLocal['problemtype_status'];
-                array_push($result, $row_result);
-            }
+            $result = $fn_reference->get_problem_type();
         }
         else if ($name === 'icon_worktype') {
             $arr_dataLocal = Class_db::getInstance()->db_select('icn_worktype');

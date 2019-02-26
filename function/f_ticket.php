@@ -8,7 +8,7 @@
 require_once 'library/constant.php';
 require_once 'function/f_general.php';
 
-/* Error code range - 0500 */
+/* Error code range - 0600 */
 class Class_ticket {
 
     private $fn_general;
@@ -91,13 +91,13 @@ class Class_ticket {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering create_new_ticket()');
 
             if (empty($userId)) {
-                throw new Exception('(ErrCode:0502) [' . __LINE__ . '] - Parameter userId empty');
+                throw new Exception('(ErrCode:0602) [' . __LINE__ . '] - Parameter userId empty');
             }
 
             return Class_db::getInstance()->db_insert('icn_ticket', array('ticket_created_by'=>$userId, 'ticket_status'=>'5'));
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+            throw new Exception($this->get_exception('0601', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
 
@@ -112,29 +112,29 @@ class Class_ticket {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering create_new_ticket()');
 
             if (empty($imageDetails)) {
-                throw new Exception('(ErrCode:0503) [' . __LINE__ . '] - Array imageDetails empty');
+                throw new Exception('(ErrCode:0603) [' . __LINE__ . '] - Array imageDetails empty');
             }
             if (empty($userId)) {
-                throw new Exception('(ErrCode:0502) [' . __LINE__ . '] - Parameter userId empty');
+                throw new Exception('(ErrCode:0602) [' . __LINE__ . '] - Parameter userId empty');
             }
 
             if (!array_key_exists('ticketId', $imageDetails) || empty($imageDetails['ticketId'])) {
-                throw new Exception('(ErrCode:0504) [' . __LINE__ . '] - Parameter ticketId empty');
+                throw new Exception('(ErrCode:0604) [' . __LINE__ . '] - Parameter ticketId empty');
             }
             if (!array_key_exists('uploadName', $imageDetails)) {
-                throw new Exception('(ErrCode:0505) [' . __LINE__ . '] - Parameter uploadName empty');
+                throw new Exception('(ErrCode:0605) [' . __LINE__ . '] - Parameter uploadName empty');
             }
             if (!array_key_exists('uploadUplName', $imageDetails) || empty($imageDetails['uploadUplName'])) {
-                throw new Exception('(ErrCode:0506) [' . __LINE__ . '] - Parameter uploadUplName empty');
+                throw new Exception('(ErrCode:0606) [' . __LINE__ . '] - Parameter uploadUplName empty');
             }
             if (!array_key_exists('uploadFilesize', $imageDetails) || empty($imageDetails['uploadFilesize'])) {
-                throw new Exception('(ErrCode:0507) [' . __LINE__ . '] - Parameter uploadFilesize empty');
+                throw new Exception('(ErrCode:0607) [' . __LINE__ . '] - Parameter uploadFilesize empty');
             }
             if (!array_key_exists('uploadBlobType', $imageDetails) || empty($imageDetails['uploadBlobType'])) {
-                throw new Exception('(ErrCode:0508) [' . __LINE__ . '] - Parameter uploadBlobType empty');
+                throw new Exception('(ErrCode:0608) [' . __LINE__ . '] - Parameter uploadBlobType empty');
             }
             if (!array_key_exists('uploadBlobData', $imageDetails) || empty($imageDetails['uploadBlobData'])) {
-                throw new Exception('(ErrCode:0509) [' . __LINE__ . '] - Parameter uploadBlobData empty');
+                throw new Exception('(ErrCode:0609) [' . __LINE__ . '] - Parameter uploadBlobData empty');
             }
 
             $ticketId = $imageDetails['ticketId'];
@@ -151,7 +151,7 @@ class Class_ticket {
             return array('uploadId'=>$uploadId, 'documentUrl'=>$documentUrl);
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+            throw new Exception($this->get_exception('0601', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
 
@@ -166,29 +166,29 @@ class Class_ticket {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering submit_new_ticket()');
 
             if (empty($ticketId)) {
-                throw new Exception('(ErrCode:0511) [' . __LINE__ . '] - Parameter ticketId empty');
+                throw new Exception('(ErrCode:0611) [' . __LINE__ . '] - Parameter ticketId empty');
             }
             if (empty($put_vars)) {
-                throw new Exception('(ErrCode:0510) [' . __LINE__ . '] - Array put_vars empty');
+                throw new Exception('(ErrCode:0610) [' . __LINE__ . '] - Array put_vars empty');
             }
             if (empty($userId)) {
-                throw new Exception('(ErrCode:0502) [' . __LINE__ . '] - Parameter userId empty');
+                throw new Exception('(ErrCode:0602) [' . __LINE__ . '] - Parameter userId empty');
             }
 
             if (!isset($put_vars['problemtypeId']) || empty($put_vars['problemtypeId'])) {
-                throw new Exception('(ErrCode:0512) [' . __LINE__ . '] - Parameter problemtypeId empty');
+                throw new Exception('(ErrCode:0612) [' . __LINE__ . '] - Parameter problemtypeId empty');
             }
             if (!isset($put_vars['workcategoryId']) || empty($put_vars['workcategoryId'])) {
-                throw new Exception('(ErrCode:0513) [' . __LINE__ . '] - Parameter workcategoryId empty');
+                throw new Exception('(ErrCode:0613) [' . __LINE__ . '] - Parameter workcategoryId empty');
             }
             if (!isset($put_vars['ticketLongitude']) || empty($put_vars['ticketLongitude'])) {
-                throw new Exception('(ErrCode:0514) [' . __LINE__ . '] - Parameter ticketLongitude empty');
+                throw new Exception('(ErrCode:0614) [' . __LINE__ . '] - Parameter ticketLongitude empty');
             }
             if (!isset($put_vars['ticketLatitude']) || empty($put_vars['ticketLatitude'])) {
-                throw new Exception('(ErrCode:0515) [' . __LINE__ . '] - Parameter ticketLatitude empty');
+                throw new Exception('(ErrCode:0615) [' . __LINE__ . '] - Parameter ticketLatitude empty');
             }
             if (!isset($put_vars['ticketComplaint']) || empty($put_vars['ticketComplaint'])) {
-                throw new Exception('(ErrCode:0516) [' . __LINE__ . '] - Parameter ticketComplaint empty');
+                throw new Exception('(ErrCode:0616) [' . __LINE__ . '] - Parameter ticketComplaint empty');
             }
 
             $problemtypeId = $put_vars['problemtypeId'];
@@ -202,7 +202,7 @@ class Class_ticket {
         }
         catch(Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+            throw new Exception($this->get_exception('0601', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
 
@@ -225,7 +225,7 @@ class Class_ticket {
         }
         catch(Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+            throw new Exception($this->get_exception('0601', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
 
@@ -240,13 +240,13 @@ class Class_ticket {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering submit_ticket()');
 
             if (empty($ticketId)) {
-                throw new Exception('(ErrCode:0511) [' . __LINE__ . '] - Parameter ticketId empty');
+                throw new Exception('(ErrCode:0611) [' . __LINE__ . '] - Parameter ticketId empty');
             }
             if (empty($ticketNo)) {
-                throw new Exception('(ErrCode:0517) [' . __LINE__ . '] - Parameter ticketNo empty');
+                throw new Exception('(ErrCode:0617) [' . __LINE__ . '] - Parameter ticketNo empty');
             }
             if (empty($taskId)) {
-                throw new Exception('(ErrCode:0518) [' . __LINE__ . '] - Parameter taskId empty');
+                throw new Exception('(ErrCode:0618) [' . __LINE__ . '] - Parameter taskId empty');
             }
 
             $transactionId = Class_db::getInstance()->db_select_col('wfl_task', array('task_id'=>$taskId), 'transaction_id', null, 1);
@@ -254,7 +254,7 @@ class Class_ticket {
         }
         catch(Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+            throw new Exception($this->get_exception('0601', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
 }
