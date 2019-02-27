@@ -41,6 +41,8 @@ try {
 
     }
     else if ('PUT' === $request_method) {
+        $put_data = file_get_contents("php://input");
+        parse_str($put_data, $put_vars);
 
     }
     else if ('DELETE' === $request_method) {
