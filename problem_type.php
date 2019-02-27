@@ -34,13 +34,29 @@ try {
     $jwt_data = $fn_login->check_jwt($headers['Authorization']);
 
     if ('GET' === $request_method) {
-        $form_data['result'] = $fn_reference->get_problem_type();
+        $problemtypeId = filter_input(INPUT_GET, 'problemtypeId');
+        $form_data['result'] = $fn_reference->get_problem_type($problemtypeId);
         $form_data['success'] = true;
     }
     else if ('POST' === $request_method) {
+        $problemtypeDesc = filter_input(INPUT_POST, 'problemtypeDesc');
+        $problemtypeStatus = filter_input(INPUT_POST, 'problemtypeStatus');
 
+        $params = array(
+            'problemtypeDesc'=>$problemtypeDesc,
+            'problemtypeStatus'=>$problemtypeStatus
+        );
+
+        $result = $fn_reference->add_problem_type($params);
+        $fn_general->updateVersion(3);
+        $fn_general->save_audit('10', $jwt_data->userId, 'Problem Type = ' . $problemtypeDesc);
+
+        $form_data['errmsg'] = $constant::SUC_PROBLEM_TYPE_ADD;
+        $form_data['result'] = $result;
+        $form_data['success'] = true;
     }
     else if ('PUT' === $request_method) {
+        $problemtypeId = filter_input(INPUT_GET, 'problemtypeId');
         $put_data = file_get_contents("php://input");
         parse_str($put_data, $put_vars);
 

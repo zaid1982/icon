@@ -16,8 +16,10 @@ class Class_constant {
     const ERR_LOGIN_NOT_ACTIVE = 'User ID is not active. Please contact Administrator to activate.';
     const ERR_FORGOT_PASSWORD_NOT_EXIST = 'User ID not exist';
     const ERR_CHANGE_PASSWORD_WRONG_CURRENT = 'Current Password is incorrect';
+    const ERR_PROBLEM_TYPE_SIMILAR = 'Problem Type already exist';
 
     const SUC_FORGOT_PASSWORD = 'Your password successfully reset. Please login with temporary password sent to your email.';
     const SUC_CHANGE_PASSWORD = 'Your password successfully changed';
+    const SUC_PROBLEM_TYPE_ADD = 'Problem Type successfully added';
 
 }
