@@ -145,4 +145,37 @@ class Class_reference {
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    public function update_problem_type ($problemtypeId, $put_vars) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering update_problem_type()');
+
+            if (empty($problemtypeId)) {
+                throw new Exception('(ErrCode:0506) [' . __LINE__ . '] - Parameter ticketId empty');
+            }
+            if (empty($put_vars)) {
+                throw new Exception('(ErrCode:0507) [' . __LINE__ . '] - Array put_vars empty');
+            }
+
+            if (!isset($put_vars['problemtypeDesc']) || empty($put_vars['problemtypeDesc'])) {
+                throw new Exception('(ErrCode:0503) [' . __LINE__ . '] - Parameter problemtypeDesc empty');
+            }
+            if (!isset($put_vars['problemtypeStatus']) || empty($put_vars['problemtypeStatus'])) {
+                throw new Exception('(ErrCode:0504) [' . __LINE__ . '] - Parameter problemtypeStatus empty');
+            }
+
+            $problemtypeDesc = $put_vars['problemtypeDesc'];
+            $problemtypeStatus = $put_vars['problemtypeStatus'];
+
+            if (Class_db::getInstance()->db_count('icn_problemtype', array('problemtype_desc'=>$problemtypeDesc, 'problemtype_id'=>'<>'.$problemtypeId)) > 0) {
+                throw new Exception('(ErrCode:0505) [' . __LINE__ . '] - '.$constant::ERR_PROBLEM_TYPE_SIMILAR, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_problemtype', array('problemtype_desc'=>$problemtypeDesc, 'problemtype_status'=>$problemtypeStatus), array('problemtype_id'=>$problemtypeId));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }

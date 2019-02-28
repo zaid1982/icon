@@ -60,6 +60,12 @@ try {
         $put_data = file_get_contents("php://input");
         parse_str($put_data, $put_vars);
 
+        $fn_reference->update_problem_type($problemtypeId, $put_vars);
+        $fn_general->updateVersion(3);
+        $fn_general->save_audit('12', $jwt_data->userId, 'Problem Type = ' . $put_vars['problemtypeDesc']);
+
+        $form_data['errmsg'] = $constant::SUC_PROBLEM_TYPE_EDIT;
+        $form_data['success'] = true;
     }
     else if ('DELETE' === $request_method) {
 

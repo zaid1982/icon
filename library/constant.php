@@ -21,5 +21,6 @@ class Class_constant {
     const SUC_FORGOT_PASSWORD = 'Your password successfully reset. Please login with temporary password sent to your email.';
     const SUC_CHANGE_PASSWORD = 'Your password successfully changed';
     const SUC_PROBLEM_TYPE_ADD = 'Problem Type successfully added';
+    const SUC_PROBLEM_TYPE_EDIT = 'Problem Type successfully updated';
 
 }
