@@ -59,16 +59,40 @@ try {
         $problemtypeId = filter_input(INPUT_GET, 'problemtypeId');
         $put_data = file_get_contents("php://input");
         parse_str($put_data, $put_vars);
+        $action = $put_vars['action'];
 
-        $fn_reference->update_problem_type($problemtypeId, $put_vars);
-        $fn_general->updateVersion(3);
-        $fn_general->save_audit('12', $jwt_data->userId, 'Problem Type = ' . $put_vars['problemtypeDesc']);
+        if ($action === 'update') {
+            $fn_reference->update_problem_type($problemtypeId, $put_vars);
+            $fn_general->updateVersion(3);
+            $fn_general->save_audit('11', $jwt_data->userId, 'Problem Type = ' . $put_vars['problemtypeDesc']);
+            $form_data['errmsg'] = $constant::SUC_PROBLEM_TYPE_EDIT;
+        }
+        else if ($action === 'deactivate') {
+            $problemtypeDesc = $fn_reference->deactivate_problem_type($problemtypeId);
+            $fn_general->updateVersion(3);
+            $fn_general->save_audit('12', $jwt_data->userId, 'Problem Type = ' . $problemtypeDesc);
+            $form_data['errmsg'] = $constant::SUC_PROBLEM_TYPE_DEACTIVATE;
+        }
+        else if ($action === 'activate') {
+            $problemtypeDesc = $fn_reference->activate_problem_type($problemtypeId);
+            $fn_general->updateVersion(3);
+            $fn_general->save_audit('13', $jwt_data->userId, 'Problem Type = ' . $problemtypeDesc);
+            $form_data['errmsg'] = $constant::SUC_PROBLEM_TYPE_ACTIVATE;
+        } else {
+            throw new Exception('(ErrCode:2402) [' . __LINE__ . '] - Parameter action invalid ('.$action.')');
+        }
 
-        $form_data['errmsg'] = $constant::SUC_PROBLEM_TYPE_EDIT;
         $form_data['success'] = true;
     }
     else if ('DELETE' === $request_method) {
+        $problemtypeId = filter_input(INPUT_GET, 'problemtypeId');
 
+        $problemtypeDesc = $fn_reference->delete_problem_type($problemtypeId);
+        $fn_general->updateVersion(3);
+        $fn_general->save_audit('12', $jwt_data->userId, 'Problem Type = ' . $problemtypeDesc);
+
+        $form_data['errmsg'] = $constant::SUC_PROBLEM_TYPE_DELETE;
+        $form_data['success'] = true;
     } else {
         throw new Exception('(ErrCode:2400) [' . __LINE__ . '] - Wrong Request Method');
     }

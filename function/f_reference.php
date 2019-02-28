@@ -152,7 +152,7 @@ class Class_reference {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering update_problem_type()');
 
             if (empty($problemtypeId)) {
-                throw new Exception('(ErrCode:0506) [' . __LINE__ . '] - Parameter ticketId empty');
+                throw new Exception('(ErrCode:0506) [' . __LINE__ . '] - Parameter problemtypeId empty');
             }
             if (empty($put_vars)) {
                 throw new Exception('(ErrCode:0507) [' . __LINE__ . '] - Array put_vars empty');
@@ -173,6 +173,72 @@ class Class_reference {
             }
 
             Class_db::getInstance()->db_update('icn_problemtype', array('problemtype_desc'=>$problemtypeDesc, 'problemtype_status'=>$problemtypeStatus), array('problemtype_id'=>$problemtypeId));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    public function deactivate_problem_type ($problemtypeId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering deactivate_problem_type()');
+
+            if (empty($problemtypeId)) {
+                throw new Exception('(ErrCode:0506) [' . __LINE__ . '] - Parameter problemtypeId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_problemtype', array('problemtype_id'=>$problemtypeId, 'problemtype_status'=>'2')) > 0) {
+                throw new Exception('(ErrCode:0508) [' . __LINE__ . '] - '.$constant::ERR_PROBLEM_TYPE_DEACTIVATE, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_problemtype', array('problemtype_status'=>'2'), array('problemtype_id'=>$problemtypeId));
+            return Class_db::getInstance()->db_select_col('icn_problemtype', array('problemtype_id'=>$problemtypeId), 'problemtype_desc', null, 1);
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    public function activate_problem_type ($problemtypeId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering activate_problem_type()');
+
+            if (empty($problemtypeId)) {
+                throw new Exception('(ErrCode:0506) [' . __LINE__ . '] - Parameter problemtypeId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_problemtype', array('problemtype_id'=>$problemtypeId, 'problemtype_status'=>'1')) > 0) {
+                throw new Exception('(ErrCode:0509) [' . __LINE__ . '] - '.$constant::ERR_PROBLEM_TYPE_ACTIVATE, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_problemtype', array('problemtype_status'=>'1'), array('problemtype_id'=>$problemtypeId));
+            return Class_db::getInstance()->db_select_col('icn_problemtype', array('problemtype_id'=>$problemtypeId), 'problemtype_desc', null, 1);
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    public function delete_problem_type ($problemtypeId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering delete_problem_type()');
+
+            if (empty($problemtypeId)) {
+                throw new Exception('(ErrCode:0506) [' . __LINE__ . '] - Parameter problemtypeId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_problemtype', array('problemtype_id'=>$problemtypeId)) == 0) {
+                throw new Exception('(ErrCode:0510) [' . __LINE__ . '] - Problem Type data not exist');
+            }
+            if (Class_db::getInstance()->db_count('icn_ticket', array('problemtype_id'=>$problemtypeId)) > 0 ||
+                    Class_db::getInstance()->db_count('icn_workorder', array('problemtype_id'=>$problemtypeId)) > 0) {
+                throw new Exception('(ErrCode:0511) [' . __LINE__ . '] - '.$constant::ERR_PROBLEM_TYPE_DELETE, 31);
+            }
+
+            $problemtypeDesc = Class_db::getInstance()->db_select_col('icn_problemtype', array('problemtype_id'=>$problemtypeId), 'problemtype_desc', null, 1);
+            Class_db::getInstance()->db_delete('icn_problemtype', array('problemtype_id'=>$problemtypeId));
+
+            return $problemtypeDesc;
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
