@@ -110,6 +110,7 @@ class Class_reference {
                 $result['problemtypeDesc'] = $dataLocal['problemtype_desc'];
                 $result['problemtypeStatus'] = $dataLocal['problemtype_status'];
             }
+
             return $result;
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
@@ -117,6 +118,11 @@ class Class_reference {
         }
     }
 
+    /**
+     * @param $params
+     * @return mixed
+     * @throws Exception
+     */
     public function add_problem_type ($params) {
         $constant = new Class_constant();
         try {
@@ -146,6 +152,11 @@ class Class_reference {
         }
     }
 
+    /**
+     * @param $problemtypeId
+     * @param $put_vars
+     * @throws Exception
+     */
     public function update_problem_type ($problemtypeId, $put_vars) {
         $constant = new Class_constant();
         try {
@@ -179,6 +190,11 @@ class Class_reference {
         }
     }
 
+    /**
+     * @param $problemtypeId
+     * @return mixed
+     * @throws Exception
+     */
     public function deactivate_problem_type ($problemtypeId) {
         $constant = new Class_constant();
         try {
@@ -199,6 +215,11 @@ class Class_reference {
         }
     }
 
+    /**
+     * @param $problemtypeId
+     * @return mixed
+     * @throws Exception
+     */
     public function activate_problem_type ($problemtypeId) {
         $constant = new Class_constant();
         try {
@@ -219,6 +240,11 @@ class Class_reference {
         }
     }
 
+    /**
+     * @param $problemtypeId
+     * @return mixed
+     * @throws Exception
+     */
     public function delete_problem_type ($problemtypeId) {
         $constant = new Class_constant();
         try {
@@ -239,6 +265,32 @@ class Class_reference {
             Class_db::getInstance()->db_delete('icn_problemtype', array('problemtype_id'=>$problemtypeId));
 
             return $problemtypeDesc;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function get_status () {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_status()');
+
+            $result = array();
+            $arr_dataLocal = Class_db::getInstance()->db_select('ref_status');
+            foreach ($arr_dataLocal as $dataLocal) {
+                $row_result['statusId'] = $dataLocal['status_id'];
+                $row_result['statusDesc'] = $dataLocal['status_desc'];
+                $row_result['statusColor'] = $this->fn_general->clear_null($dataLocal['status_color']);
+                $row_result['statusColorCode'] = $this->fn_general->clear_null($dataLocal['status_color_code']);
+                $row_result['statusAction'] = $this->fn_general->clear_null($dataLocal['status_action']);
+                array_push($result, $row_result);
+            }
+
+            return $result;
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());

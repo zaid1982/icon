@@ -257,5 +257,131 @@ class Class_ticket {
             throw new Exception($this->get_exception('0601', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function get_ticket_list () {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_ticket_list()');
+
+            $result = array();
+            $tickets = Class_db::getInstance()->db_select('icn_ticket', array('ticket_status'=>'<>5'));
+            foreach ($tickets as $ticket) {
+                $row_result['ticketId'] = $ticket['ticket_id'];
+                $row_result['ticketNo'] = $this->fn_general->clear_null($ticket['ticket_no']);
+                $row_result['problemtypeId'] = $ticket['problemtype_id'];
+                $row_result['workcategoryId'] = $ticket['workcategory_id'];
+                $row_result['transactionId'] = $ticket['transaction_id'];
+                $row_result['ticketTimeSubmit'] = str_replace('-', '/', $ticket['ticket_time_submit']);
+                $row_result['ticketStatus'] = $ticket['ticket_status'];
+                array_push($result, $row_result);
+            }
+
+            return $result;
+        }
+        catch(Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0601', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function get_ticket_list_mobile () {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_ticket_list_mobile()');
+
+            $result = array();
+            $tickets = Class_db::getInstance()->db_select('dt_ticket', array('ticket_status'=>'<>5'));
+            foreach ($tickets as $ticket) {
+                $row_result['ticketId'] = $ticket['ticket_id'];
+                $row_result['ticketNo'] = $this->fn_general->clear_null($ticket['ticket_no']);
+                $row_result['problemtypeDesc'] = $ticket['problemtype_desc'];
+                $row_result['worktypeDesc'] = $ticket['worktype_desc'];
+                $row_result['workcategoryDesc'] = $ticket['workcategory_desc'];
+                $row_result['ticketComplaint'] = $this->fn_general->clear_null($ticket['ticket_complaint']);
+                $row_result['transactionId'] = $ticket['transaction_id'];
+                $row_result['ticketTimeSubmit'] = str_replace('-', '/', $ticket['ticket_time_submit']);
+                $row_result['statusDesc'] = $ticket['status_desc'];
+                array_push($result, $row_result);
+            }
+
+            return $result;
+        }
+        catch(Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0601', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $ticketId
+     * @return mixed
+     * @throws Exception
+     */
+    public function get_ticket ($ticketId) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_ticket()');
+
+            if (empty($ticketId)) {
+                throw new Exception('(ErrCode:0611) [' . __LINE__ . '] - Parameter ticketId empty');
+            }
+
+            $ticket = Class_db::getInstance()->db_select_single('icn_ticket', array('ticket_id'=>$ticketId), null, 1);
+            $result['ticketId'] = $ticket['ticket_id'];
+            $result['ticketNo'] = $this->fn_general->clear_null($ticket['ticket_no']);
+            $result['problemtypeId'] = $ticket['problemtype_id'];
+            $result['workcategoryId'] = $ticket['workcategory_id'];
+            $result['ticketLongitude'] = $ticket['ticket_longitude'];
+            $result['ticketLatitude'] = $ticket['ticket_latitude'];
+            $result['ticketComplaint'] = $this->fn_general->clear_null($ticket['ticket_complaint']);
+            $result['ticketTimeSubmit'] = str_replace('-', '/', $ticket['ticket_time_submit']);
+            $result['transactionId'] = $ticket['transaction_id'];
+            $result['ticketStatus'] = $ticket['ticket_status'];
+
+            $user = Class_db::getInstance()->db_select_single('sys_user', array('user_id'=>$ticket['ticket_created_by']));
+            $result['createdBy'] = $user['user_first_name'].' '.$user['user_last_name'];
+
+            $result['ticketImages'] = array();
+            $ticketImages = Class_db::getInstance()->db_select('icn_ticket_image', array('ticket_id'=>$ticketId));
+            foreach ($ticketImages as $ticketImage) {
+                array_push($result['ticketImages'], $this->fn_general->getDocument($ticketImage['upload_id']));
+            }
+
+            return $result;
+        }
+        catch(Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0601', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @return mixed
+     * @throws Exception
+     */
+    public function get_tickets_by_status () {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_tickets_by_status()');
+
+            $result = array();
+            $ticketData = Class_db::getInstance()->db_select('vw_ticket_by_status');
+            foreach ($ticketData as $data) {
+                $row_result['ticketStatus'] = $data['ticket_status'];
+                $row_result['total'] = $data['total'];
+                array_push($result, $row_result);
+            }
+
+            return $result;
+        }
+        catch(Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0601', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }
 

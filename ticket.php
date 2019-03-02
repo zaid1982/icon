@@ -102,34 +102,21 @@ try {
     }
     else if ('GET' === $request_method) {
         $ticketId = filter_input(INPUT_GET, 'ticketId');
-        $result = array();
 
-        if (!is_null($ticketId)) {
-
-        }
-        else {
-            if (isset($headers['Simple'])) {
-                $tickets = Class_db::getInstance()->db_select('icn_ticket', array('ticket_status'=>'<>5'));
-                foreach ($tickets as $ticket) {
-                    $row_result['ticketId'] = $ticket['ticket_id'];
-                    $row_result['ticketNo'] = $fn_general->clear_null($ticket['ticket_no']);
-                    $row_result['problemtypeId'] = $ticket['problemtype_id'];
-                    $row_result['workcategoryId'] = $ticket['workcategory_id'];
-                    $row_result['transactionId'] = $ticket['transaction_id'];
-                    $row_result['ticketStatus'] = $ticket['ticket_status'];
-                    $row_result['ticketTimeSubmit'] = str_replace('-', '/', $ticket['ticket_time_submit']);
-                    array_push($result, $row_result);
-                }
+        if (isset($headers['Reportid'])) {
+            $reportId = $headers['Reportid'];
+            if ($reportId === '1') {
+                $result = $fn_ticket->get_tickets_by_status();
+            } else {
+                throw new Exception('(ErrCode:2404) [' . __LINE__ . '] - Parameter Reportid ('.$reportId.') invalid');
             }
-            else {
-                $tickets = Class_db::getInstance()->db_select('dt_ticket');
-                foreach ($tickets as $ticket) {
-                    $row_result['ticketId'] = $ticket['ticket_id'];
-                    $row_result['ticketNo'] = $fn_general->clear_null($ticket['ticket_no']);
-                    $row_result['ticketComplaint'] = $fn_general->clear_null($ticket['ticket_complaint']);
-                    $row_result['ticketStatus'] = $ticket['ticket_status'];
-                    array_push($result, $row_result);
-                }
+        } else if (!is_null($ticketId)) {
+            $result = $fn_ticket->get_ticket($ticketId);
+        } else {
+            if (isset($headers['Mobile'])) {
+                $result = $fn_ticket->get_ticket_list_mobile();
+            } else {
+                $result = $fn_ticket->get_ticket_list();
             }
         }
 

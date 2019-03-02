@@ -62,29 +62,30 @@ class Class_sql
                 LEFT JOIN sys_nav_second ON sys_nav_second.nav_second_id = nav_role.nav_second_id
                 WHERE nav_status = 1 AND (ISNULL(sys_nav_second.nav_second_id) OR nav_second_status = 1)
                 ORDER BY nav_role.turn";
-            } else if ($title === 'dt_sem_company') {
+            } else if ($title === 'dt_ticket') {
                 $sql = "SELECT
-                    sem_company.*,
-                    sys_address.address_desc,
-                    sys_address.address_postcode,
-                    sys_address.state_id,
-                    sys_address.city_id
-                FROM sem_company
-                LEFT JOIN sys_address ON sys_address.address_id = sem_company.address_id";
-            } else if ($title === 'vw_company_by_state') {
+                    icn_ticket.*,
+                    icn_problemtype.problemtype_desc,
+                    icn_worktype.worktype_desc,
+                    icn_workcategory.workcategory_desc,
+                    ref_status.status_desc
+                FROM icn_ticket
+                LEFT JOIN icn_problemtype ON icn_problemtype.problemtype_id = icn_ticket.problemtype_id
+                LEFT JOIN icn_workcategory ON icn_workcategory.workcategory_id = icn_ticket.workcategory_id
+                LEFT JOIN icn_worktype ON icn_worktype.worktype_id = icn_workcategory.worktype_id
+                LEFT JOIN ref_status ON ref_status.status_id = icn_ticket.ticket_status
+                ";
+            } else if ($title === 'vw_ticket_by_status') {
                 $sql = "SELECT
-                    sys_address.state_id, COUNT(*) AS total
-                FROM sem_company
-                LEFT JOIN sys_address ON sys_address.address_id = sem_company.address_id
-                GROUP BY sys_address.state_id";
+                    ticket_status, COUNT(*) AS total
+                FROM icn_ticket
+                GROUP BY ticket_status";
             } else if ($title === 'vw_company_stats') {
                 $sql = "SELECT 
                     COUNT(*) AS total,
                     SUM(IF(company_status = 1, 1, 0)) AS total_active,
                     SUM(IF(company_created_by IS NULL, 1, 0)) AS total_spdp
                 FROM sem_company";
-            } else if ($title === 'dt_ticket') {
-
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }

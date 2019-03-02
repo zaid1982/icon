@@ -34,15 +34,7 @@ try {
             
         $result = array();
         if ($name === 'icon_status') {
-            $arr_dataLocal = Class_db::getInstance()->db_select('ref_status');        
-            foreach ($arr_dataLocal as $dataLocal) {
-                $row_result = array('statusId'=>'', 'statusDesc'=>'', 'statusColor'=>'', 'statusAction'=>'');
-                $row_result['statusId'] = $dataLocal['status_id'];
-                $row_result['statusDesc'] = $dataLocal['status_desc'];
-                $row_result['statusColor'] = $fn_general->clear_null($dataLocal['status_color']);
-                $row_result['statusAction'] = $fn_general->clear_null($dataLocal['status_action']);
-                array_push($result, $row_result);
-            }  
+            $result = $fn_reference->get_status();
         }        
         else if ($name === 'icon_state') {
             $arr_dataLocal = Class_db::getInstance()->db_select('ref_state');        
