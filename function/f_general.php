@@ -309,7 +309,7 @@ class Class_general {
             }
             
             $newDate = '';
-            $arrMonth = array('', 'Januari', 'Februari', 'Mac', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember');
+            $arrMonth = array('', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
             $dateSplit = explode('-', $date);
             if (sizeof($dateSplit) === 3) {                
                 $newDate = intval($dateSplit[2]).' '.$arrMonth[intval($dateSplit[1])].' '.$dateSplit[0];

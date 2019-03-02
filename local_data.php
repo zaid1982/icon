@@ -62,25 +62,10 @@ try {
             $result = $fn_reference->get_problem_type();
         }
         else if ($name === 'icon_worktype') {
-            $arr_dataLocal = Class_db::getInstance()->db_select('icn_worktype');
-            foreach ($arr_dataLocal as $dataLocal) {
-                $row_result = array('worktypeId'=>'', 'worktypeDesc'=>'', 'worktypeStatus'=>'');
-                $row_result['worktypeId'] = $dataLocal['worktype_id'];
-                $row_result['worktypeDesc'] = $dataLocal['worktype_desc'];
-                $row_result['worktypeStatus'] = $dataLocal['worktype_status'];
-                array_push($result, $row_result);
-            }
+            $result = $fn_reference->get_work_type();
         }
         else if ($name === 'icon_workcategory') {
-            $arr_dataLocal = Class_db::getInstance()->db_select('icn_workcategory');
-            foreach ($arr_dataLocal as $dataLocal) {
-                $row_result = array('workcategoryId'=>'', 'workcategoryDesc'=>'', 'worktypeId'=>'', 'workcategoryStatus'=>'');
-                $row_result['workcategoryId'] = $dataLocal['workcategory_id'];
-                $row_result['workcategoryDesc'] = $dataLocal['workcategory_desc'];
-                $row_result['worktypeId'] = $dataLocal['worktype_id'];
-                $row_result['workcategoryStatus'] = $dataLocal['workcategory_status'];
-                array_push($result, $row_result);
-            }
+            $result = $fn_reference->get_work_category();
         } else {
             throw new Exception('(ErrCode:2303) [' . __LINE__ . '] - Parameter name invalid ('.$name.')');
         }

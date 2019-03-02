@@ -86,6 +86,14 @@ class Class_sql
                     SUM(IF(company_status = 1, 1, 0)) AS total_active,
                     SUM(IF(company_created_by IS NULL, 1, 0)) AS total_spdp
                 FROM sem_company";
+            } else if ($title === 'vw_ticket_worktype') {
+                $sql = "SELECT icn_ticket.* 
+                FROM icn_ticket 
+                LEFT JOIN icn_workcategory ON icn_workcategory.workcategory_id = icn_ticket.workcategory_id";
+            } else if ($title === 'vw_workorder_worktype') {
+                $sql = "SELECT icn_workorder.* 
+                FROM icn_workorder 
+                LEFT JOIN icn_workcategory ON icn_workcategory.workcategory_id = icn_workorder.workcategory_id";
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }

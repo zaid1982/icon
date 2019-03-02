@@ -29,7 +29,7 @@ try {
 
     $headers = apache_request_headers();
     if (!isset($headers['Authorization'])) {
-        throw new Exception('(ErrCode:2401) [' . __LINE__ . '] - Parameter Authorization empty');
+        throw new Exception('(ErrCode:2501) [' . __LINE__ . '] - Parameter Authorization empty');
     }
     $jwt_data = $fn_login->check_jwt($headers['Authorization']);
 
@@ -79,7 +79,7 @@ try {
             $fn_general->save_audit('13', $jwt_data->userId, 'Problem Type = ' . $problemtypeDesc);
             $form_data['errmsg'] = $constant::SUC_PROBLEM_TYPE_ACTIVATE;
         } else {
-            throw new Exception('(ErrCode:2402) [' . __LINE__ . '] - Parameter action invalid ('.$action.')');
+            throw new Exception('(ErrCode:2502) [' . __LINE__ . '] - Parameter action invalid ('.$action.')');
         }
 
         $form_data['success'] = true;
@@ -89,12 +89,12 @@ try {
 
         $problemtypeDesc = $fn_reference->delete_problem_type($problemtypeId);
         $fn_general->updateVersion(3);
-        $fn_general->save_audit('12', $jwt_data->userId, 'Problem Type = ' . $problemtypeDesc);
+        $fn_general->save_audit('14', $jwt_data->userId, 'Problem Type = ' . $problemtypeDesc);
 
         $form_data['errmsg'] = $constant::SUC_PROBLEM_TYPE_DELETE;
         $form_data['success'] = true;
     } else {
-        throw new Exception('(ErrCode:2400) [' . __LINE__ . '] - Wrong Request Method');
+        throw new Exception('(ErrCode:2500) [' . __LINE__ . '] - Wrong Request Method');
     }
     Class_db::getInstance()->db_close();
 } catch (Exception $ex) {

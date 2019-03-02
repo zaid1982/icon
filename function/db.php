@@ -30,7 +30,12 @@ class Class_db{
             return "(ErrCode:".$codes.") [".__CLASS__.":".$function.":".$line."]";
         }
     }
-        
+
+    /**
+     * @param $property
+     * @return mixed
+     * @throws Exception
+     */
     public function __get($property) {
         if (property_exists($this, $property)) {
             return $this->$property;
@@ -40,7 +45,12 @@ class Class_db{
         }
     }
 
-    public function __set( $property, $value ) {
+    /**
+     * @param $property
+     * @param $value
+     * @throws Exception
+     */
+    public function __set($property, $value ) {
         if (property_exists($this, $property)) {
             $this->$property = $value;        
         }
@@ -48,8 +58,13 @@ class Class_db{
             throw new Exception($this->get_exception('0002', __FUNCTION__, __LINE__, 'Get Property not exist ['.$property.']'));
         }
     }
-    
-    public function __isset( $property ) {
+
+    /**
+     * @param $property
+     * @return bool
+     * @throws Exception
+     */
+    public function __isset($property ) {
         if (property_exists($this, $property)) {
             return isset($this->$property);
         }
@@ -57,8 +72,12 @@ class Class_db{
             throw new Exception($this->get_exception('0003', __FUNCTION__, __LINE__, 'Get Property not exist ['.$property.']'));
         }
     }
-    
-    public function __unset( $property ) {
+
+    /**
+     * @param $property
+     * @throws Exception
+     */
+    public function __unset($property ) {
         if (property_exists($this, $property)) {
             unset($this->$property);
         }
@@ -114,7 +133,12 @@ class Class_db{
         }
         return $where_str;
     }
-    
+
+    /**
+     * @param $columnsArr
+     * @return string|null
+     * @throws Exception
+     */
     private function get_set_str($columnsArr) {
         $set_str = NULL;
         foreach ($columnsArr as $item => $value) {
@@ -222,9 +246,14 @@ class Class_db{
         }
         return $outputDate;
     }
-    
+
+    /**
+     * @param $tablename
+     * @param array $param
+     * @return mixed|string
+     * @throws Exception
+     */
     public function get_sql ($tablename, $param=array()) {
-        $s = '';
         if (substr($tablename, 0, 2) == 'vw' || substr($tablename, 0, 2) == 'dt' || substr($tablename, 0, 2) == 'vg') {
             $fn_sql = new Class_sql();
             $s = $fn_sql->get_sql($tablename);
@@ -243,9 +272,14 @@ class Class_db{
         }
         return $s;
     }
-    
+
+    /**
+     * @param $tablename
+     * @param array $param
+     * @return mixed|string
+     * @throws Exception
+     */
     public function get_sql_v2 ($tablename, $param=array()) {
-        $s = '';
         if (substr($tablename, 0, 2) == 'vw' || substr($tablename, 0, 2) == 'dt') {
             $fn_sql = new Class_sql();
             $s = $fn_sql->get_sql($tablename);
@@ -264,7 +298,17 @@ class Class_db{
         } 
         return $s;
     }
-    
+
+    /**
+     * @param $tablename
+     * @param array $columns
+     * @param string $orderby
+     * @param string $limit
+     * @param int $throwEmpty
+     * @param array $sqlParam
+     * @return mixed
+     * @throws Exception
+     */
     public function db_select($tablename, $columns=array(), $orderby='', $limit='', $throwEmpty=0, $sqlParam=array())
     {
         try { 
@@ -297,7 +341,16 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()));
         }
     }
-    
+
+    /**
+     * @param $tablename
+     * @param array $columns
+     * @param string $orderby
+     * @param int $throwEmpty
+     * @param array $sqlParam
+     * @return mixed
+     * @throws Exception
+     */
     public function db_select_single($tablename, $columns=array(), $orderby='', $throwEmpty=0, $sqlParam=array())
     {
         try { 
@@ -329,7 +382,17 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()));
         }
     }
-    
+
+    /**
+     * @param $tablename
+     * @param $columns
+     * @param $colOut
+     * @param string $orderby
+     * @param int $throwEmpty
+     * @param array $sqlParam
+     * @return string
+     * @throws Exception
+     */
     public function db_select_col ($tablename, $columns, $colOut, $orderby='', $throwEmpty=0, $sqlParam=array())
     {
         try { 
@@ -369,7 +432,17 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()));
         }
     }
-    
+
+    /**
+     * @param $tablename
+     * @param $columns
+     * @param $colOut
+     * @param string $orderby
+     * @param int $throwEmpty
+     * @param array $sqlParam
+     * @return array
+     * @throws Exception
+     */
     public function db_select_colm ($tablename, $columns, $colOut, $orderby='', $throwEmpty=0, $sqlParam=array())
     {
         try { 
@@ -409,7 +482,18 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()));
         }
     }
-    
+
+    /**
+     * @param $tablename
+     * @param $colOut
+     * @param array $columns
+     * @param string $orderby
+     * @param string $limit
+     * @param int $throwEmpty
+     * @param array $sqlParam
+     * @return array
+     * @throws Exception
+     */
     public function db_select_cols($tablename, $colOut, $columns=array(), $orderby='', $limit='', $throwEmpty=0, $sqlParam=array())
     {
         try { 
@@ -451,7 +535,14 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()));
         }
     }
-        
+
+    /**
+     * @param $tablename
+     * @param array $columns
+     * @param array $sqlParam
+     * @return mixed
+     * @throws Exception
+     */
     public function db_count($tablename, $columns=array(), $sqlParam=array())
     {
         try {
@@ -473,14 +564,19 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()));
         }
     }
-        
+
+    /**
+     * @param $tablename
+     * @param null $columns
+     * @return mixed
+     * @throws Exception
+     */
     public function db_insert($tablename, $columns=NULL)
     {
         try {    
             if (empty($this->DBH)) {
                 throw new Exception($this->get_exception('0006', __FUNCTION__, __LINE__, 'Connection lost'));
             }
-            $sql = "";
             if (empty($columns)) {
                 $sql = empty($columns) ? "INSERT INTO ".$tablename." () VALUES ()" : "INSERT INTO ".$tablename.$this->get_comma_str($columns)." VALUES ".$this->get_commaVal_str($columns);
             } else {
@@ -494,7 +590,14 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()), $e->getCode());
         }
     }
-    
+
+    /**
+     * @param $tablename
+     * @param $setArr
+     * @param $whereArr
+     * @return mixed
+     * @throws Exception
+     */
     public function db_update($tablename, $setArr, $whereArr)
     {
         try {
@@ -519,7 +622,14 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()), $e->getCode());
         }
     }
-    
+
+    /**
+     * @param $tablename
+     * @param $columns
+     * @param null $whereCustom
+     * @return mixed
+     * @throws Exception
+     */
     public function db_delete($tablename, $columns, $whereCustom=NULL)
     {
         try {
@@ -548,8 +658,11 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()));
         }
     }
-        
-    public function db_beginTransaction() {   
+
+    /**
+     * @throws Exception
+     */
+    public function db_beginTransaction() {
         try {
             if (empty($this->DBH)) {
                 throw new Exception($this->get_exception('0006', __FUNCTION__, __LINE__, 'Connection lost'));
@@ -560,8 +673,11 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()));
         }
     }
-    
-    public function db_commit() {   
+
+    /**
+     * @throws Exception
+     */
+    public function db_commit() {
         try {
             if (empty($this->DBH)) {
                 throw new Exception($this->get_exception('0006', __FUNCTION__, __LINE__, 'Connection lost'));
@@ -572,8 +688,11 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()));
         }
     }
-        
-    public function db_connect() {   
+
+    /**
+     * @throws Exception
+     */
+    public function db_connect() {
         try {
             $config = parse_ini_file('library/config.ini');
             $dbname = $config['dbname'];    
@@ -585,8 +704,11 @@ class Class_db{
             throw new Exception($this->get_exception('0005', __FUNCTION__, __LINE__, $e->getMessage()));
         }
     }
-    
-    public function db_rollback() {   
+
+    /**
+     * @throws Exception
+     */
+    public function db_rollback() {
          try {
             if (empty($this->DBH)) {
                 throw new Exception($this->get_exception('0006', __FUNCTION__, __LINE__, 'Connection lost'));
