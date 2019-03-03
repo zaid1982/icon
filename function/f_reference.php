@@ -553,4 +553,127 @@ class Class_reference {
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    /**
+     * @param $workcategoryId
+     * @param $put_vars
+     * @throws Exception
+     */
+    public function update_work_category ($workcategoryId, $put_vars) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering update_work_category()');
+
+            if (empty($workcategoryId)) {
+                throw new Exception('(ErrCode:0523) [' . __LINE__ . '] - Parameter workcategoryId empty');
+            }
+            if (empty($put_vars)) {
+                throw new Exception('(ErrCode:0507) [' . __LINE__ . '] - Array put_vars empty');
+            }
+
+            if (!isset($put_vars['workcategoryDesc']) || empty($put_vars['workcategoryDesc'])) {
+                throw new Exception('(ErrCode:0520) [' . __LINE__ . '] - Parameter workcategoryDesc empty');
+            }
+            if (!isset($put_vars['worktypeId']) || empty($put_vars['worktypeId'])) {
+                throw new Exception('(ErrCode:0515) [' . __LINE__ . '] - Parameter worktypeId empty');
+            }
+            if (!isset($put_vars['workcategoryStatus']) || empty($put_vars['workcategoryStatus'])) {
+                throw new Exception('(ErrCode:0521) [' . __LINE__ . '] - Parameter workcategoryStatus empty');
+            }
+
+            $workcategoryDesc = $put_vars['workcategoryDesc'];
+            $worktypeId = $put_vars['worktypeId'];
+            $workcategoryStatus = $put_vars['workcategoryStatus'];
+
+            if (Class_db::getInstance()->db_count('icn_workcategory', array('workcategory_desc'=>$workcategoryDesc, 'worktype_id'=>$worktypeId, 'workcategory_id'=>'<>'.$workcategoryId)) > 0) {
+                throw new Exception('(ErrCode:0522) [' . __LINE__ . '] - '.$constant::ERR_WORK_CATEGORY_SIMILAR, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_workcategory', array('workcategory_desc'=>$workcategoryDesc, 'worktype_id'=>$worktypeId, 'workcategory_status'=>$workcategoryStatus), array('workcategory_id'=>$workcategoryId));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $workcategoryId
+     * @return mixed
+     * @throws Exception
+     */
+    public function deactivate_work_category ($workcategoryId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering deactivate_work_category()');
+
+            if (empty($workcategoryId)) {
+                throw new Exception('(ErrCode:0523) [' . __LINE__ . '] - Parameter workcategoryId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_workcategory', array('workcategory_id'=>$workcategoryId, 'workcategory_status'=>'2')) > 0) {
+                throw new Exception('(ErrCode:0524) [' . __LINE__ . '] - '.$constant::ERR_WORK_CATEGORY_DEACTIVATE, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_workcategory', array('workcategory_status'=>'2'), array('workcategory_id'=>$workcategoryId));
+            return Class_db::getInstance()->db_select_col('icn_workcategory', array('workcategory_id'=>$workcategoryId), 'workcategory_desc', null, 1);
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $workcategoryId
+     * @return mixed
+     * @throws Exception
+     */
+    public function activate_work_category ($workcategoryId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering activate_work_category()');
+
+            if (empty($workcategoryId)) {
+                throw new Exception('(ErrCode:0523) [' . __LINE__ . '] - Parameter workcategoryId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_workcategory', array('workcategory_id'=>$workcategoryId, 'workcategory_status'=>'1')) > 0) {
+                throw new Exception('(ErrCode:0525) [' . __LINE__ . '] - '.$constant::ERR_WORK_CATEGORY_ACTIVATE, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_workcategory', array('workcategory_status'=>'1'), array('workcategory_id'=>$workcategoryId));
+            return Class_db::getInstance()->db_select_col('icn_workcategory', array('workcategory_id'=>$workcategoryId), 'workcategory_desc', null, 1);
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $workcategoryId
+     * @return mixed
+     * @throws Exception
+     */
+    public function delete_work_category ($workcategoryId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering delete_work_category()');
+
+            if (empty($workcategoryId)) {
+                throw new Exception('(ErrCode:0523) [' . __LINE__ . '] - Parameter workcategoryId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_workcategory', array('workcategory_id'=>$workcategoryId)) == 0) {
+                throw new Exception('(ErrCode:0526) [' . __LINE__ . '] - Problem Type data not exist');
+            }
+            if (Class_db::getInstance()->db_count('icn_ticket', array('workcategory_id'=>$workcategoryId)) > 0 ||
+                Class_db::getInstance()->db_count('icn_workorder', array('workcategory_id'=>$workcategoryId)) > 0) {
+                throw new Exception('(ErrCode:0527) [' . __LINE__ . '] - '.$constant::ERR_WORK_CATEGORY_DELETE, 31);
+            }
+
+            $workcategoryDesc = Class_db::getInstance()->db_select_col('icn_workcategory', array('workcategory_id'=>$workcategoryId), 'workcategory_desc', null, 1);
+            Class_db::getInstance()->db_delete('icn_workcategory', array('workcategory_id'=>$workcategoryId));
+
+            return $workcategoryDesc;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }

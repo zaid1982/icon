@@ -53,7 +53,7 @@ try {
         $fn_general->updateVersion(5);
         $fn_general->save_audit('20', $jwt_data->userId, 'Work Category = ' . $workcategoryDesc);
 
-        $form_data['errmsg'] = $constant::SUC_WORK_TYPE_ADD;
+        $form_data['errmsg'] = $constant::SUC_WORK_CATEGORY_ADD;
         $form_data['result'] = $result;
         $form_data['success'] = true;
     }
@@ -67,19 +67,19 @@ try {
             $fn_reference->update_work_category($workcategoryId, $put_vars);
             $fn_general->updateVersion(5);
             $fn_general->save_audit('21', $jwt_data->userId, 'Work Category = ' . $put_vars['workcategoryDesc']);
-            $form_data['errmsg'] = $constant::SUC_WORK_TYPE_EDIT;
+            $form_data['errmsg'] = $constant::SUC_WORK_CATEGORY_EDIT;
         }
         else if ($action === 'deactivate') {
             $workcategoryDesc = $fn_reference->deactivate_work_category($workcategoryId);
             $fn_general->updateVersion(5);
             $fn_general->save_audit('22', $jwt_data->userId, 'Work Category = ' . $workcategoryDesc);
-            $form_data['errmsg'] = $constant::SUC_WORK_TYPE_DEACTIVATE;
+            $form_data['errmsg'] = $constant::SUC_WORK_CATEGORY_DEACTIVATE;
         }
         else if ($action === 'activate') {
             $workcategoryDesc = $fn_reference->activate_work_category($workcategoryId);
             $fn_general->updateVersion(5);
             $fn_general->save_audit('23', $jwt_data->userId, 'Work Category = ' . $workcategoryDesc);
-            $form_data['errmsg'] = $constant::SUC_WORK_TYPE_ACTIVATE;
+            $form_data['errmsg'] = $constant::SUC_WORK_CATEGORY_ACTIVATE;
         } else {
             throw new Exception('(ErrCode:2702) [' . __LINE__ . '] - Parameter action invalid ('.$action.')');
         }
@@ -93,7 +93,7 @@ try {
         $fn_general->updateVersion(5);
         $fn_general->save_audit('24', $jwt_data->userId, 'Work Category = ' . $workcategoryDesc);
 
-        $form_data['errmsg'] = $constant::SUC_WORK_TYPE_DELETE;
+        $form_data['errmsg'] = $constant::SUC_WORK_CATEGORY_DELETE;
         $form_data['success'] = true;
     } else {
         throw new Exception('(ErrCode:2700) [' . __LINE__ . '] - Wrong Request Method');
