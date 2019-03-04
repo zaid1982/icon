@@ -33,41 +33,33 @@ try {
         $name = $headers['Name'];    
             
         $result = array();
-        if ($name === 'icon_status') {
-            $result = $fn_reference->get_status();
-        }        
-        else if ($name === 'icon_state') {
-            $arr_dataLocal = Class_db::getInstance()->db_select('ref_state');        
-            foreach ($arr_dataLocal as $dataLocal) {
-                $row_result = array('stateId'=>'', 'stateDesc'=>'', 'countryId'=>'', 'stateStatus'=>'');
-                $row_result['stateId'] = $dataLocal['state_id'];
-                $row_result['stateDesc'] = $dataLocal['state_desc'];
-                $row_result['countryId'] = $dataLocal['country_id'];
-                $row_result['stateStatus'] = $dataLocal['state_status'];
-                array_push($result, $row_result);
-            }  
-        }
-        else if ($name === 'icon_city') {
-            $arr_dataLocal = Class_db::getInstance()->db_select('ref_city');
-            foreach ($arr_dataLocal as $dataLocal) {
-                $row_result = array('cityId' => '', 'citiDesc' => '', 'stateId' => '', 'cityStatus' => '');
-                $row_result['cityId'] = $dataLocal['city_id'];
-                $row_result['cityDesc'] = $dataLocal['city_desc'];
-                $row_result['stateId'] = $dataLocal['state_id'];
-                $row_result['cityStatus'] = $dataLocal['city_status'];
-                array_push($result, $row_result);
-            }
-        }
-        else if ($name === 'icon_problemtype') {
-            $result = $fn_reference->get_problem_type();
-        }
-        else if ($name === 'icon_worktype') {
-            $result = $fn_reference->get_work_type();
-        }
-        else if ($name === 'icon_workcategory') {
-            $result = $fn_reference->get_work_category();
-        } else {
-            throw new Exception('(ErrCode:2303) [' . __LINE__ . '] - Parameter name invalid ('.$name.')');
+        switch ($name) {
+            case 'icon_status':
+                $result = $fn_reference->get_status();
+                break;
+            case 'icon_state':
+                $result = $fn_reference->get_state();
+                break;
+            case 'icon_city':
+                $result = $fn_reference->get_city();
+                break;
+            case 'icon_problemtype':
+                $result = $fn_reference->get_problem_type();
+                break;
+            case 'icon_worktype':
+                $result = $fn_reference->get_work_type();
+                break;
+            case 'icon_workcategory':
+                $result = $fn_reference->get_work_category();
+                break;
+            case 'icon_area':
+                $result = $fn_reference->get_area();
+                break;
+            case 'icon_site':
+                $result = $fn_reference->get_site();
+                break;
+            default:
+                throw new Exception('(ErrCode:2303) [' . __LINE__ . '] - Parameter name invalid ('.$name.')');
         }
                 
         $form_data['result'] = $result;

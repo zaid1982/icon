@@ -28,6 +28,10 @@ class Class_constant {
     const ERR_WORK_CATEGORY_DEACTIVATE = 'Work Category already inactive';
     const ERR_WORK_CATEGORY_ACTIVATE = 'Work Category already active';
     const ERR_WORK_CATEGORY_DELETE = 'Work Category cannot be deleted because it\'s been selected by complainer from Ticket';
+    const ERR_SITE_SIMILAR = 'Site already exist';
+    const ERR_SITE_DEACTIVATE = 'Site already inactive';
+    const ERR_SITE_ACTIVATE = 'Site already active';
+    const ERR_SITE_DELETE = 'Site cannot be deleted because it\'s been selected in Work Order or Vendor';
 
     const SUC_FORGOT_PASSWORD = 'Your password successfully reset. Please login with temporary password sent to your email.';
     const SUC_CHANGE_PASSWORD = 'Your password successfully changed';
@@ -46,5 +50,10 @@ class Class_constant {
     const SUC_WORK_CATEGORY_DEACTIVATE = 'Work Category successfully deactivated';
     const SUC_WORK_CATEGORY_ACTIVATE = 'Work Category successfully activated';
     const SUC_WORK_CATEGORY_DELETE = 'Work Category successfully deleted';
+    const SUC_SITE_ADD = 'Site successfully added';
+    const SUC_SITE_EDIT = 'Site successfully updated';
+    const SUC_SITE_DEACTIVATE = 'Site successfully deactivated';
+    const SUC_SITE_ACTIVATE = 'Site successfully activated';
+    const SUC_SITE_DELETE = 'Site successfully deleted';
 
 }

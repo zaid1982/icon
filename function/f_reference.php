@@ -676,4 +676,133 @@ class Class_reference {
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    /**
+     * @param null $stateId
+     * @return array
+     * @throws Exception
+     */
+    public function get_state ($stateId=null) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_state()');
+
+            $result = array();
+            if (is_null($stateId)) {
+                $arr_dataLocal = Class_db::getInstance()->db_select('ref_state');
+                foreach ($arr_dataLocal as $dataLocal) {
+                    $row_result['stateId'] = $dataLocal['state_id'];
+                    $row_result['stateDesc'] = $dataLocal['state_desc'];
+                    $row_result['stateStatus'] = $dataLocal['state_status'];
+                    array_push($result, $row_result);
+                }
+            } else {
+                $dataLocal = Class_db::getInstance()->db_select_single('ref_state', array('state_id'=>$stateId), null, 1);
+                $result['stateId'] = $dataLocal['state_id'];
+                $result['stateDesc'] = $dataLocal['state_desc'];
+                $result['stateStatus'] = $dataLocal['state_status'];
+            }
+
+            return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param null $cityId
+     * @return array
+     * @throws Exception
+     */
+    public function get_city ($cityId=null) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_city()');
+
+            $result = array();
+            if (is_null($cityId)) {
+                $arr_dataLocal = Class_db::getInstance()->db_select('ref_city');
+                foreach ($arr_dataLocal as $dataLocal) {
+                    $row_result['cityId'] = $dataLocal['city_id'];
+                    $row_result['cityDesc'] = $dataLocal['city_desc'];
+                    $row_result['stateId'] = $dataLocal['state_id'];
+                    $row_result['cityStatus'] = $dataLocal['city_status'];
+                    array_push($result, $row_result);
+                }
+            } else {
+                $dataLocal = Class_db::getInstance()->db_select_single('ref_city', array('city_id'=>$cityId), null, 1);
+                $result['cityId'] = $dataLocal['city_id'];
+                $result['cityDesc'] = $dataLocal['city_desc'];
+                $result['stateId'] = $dataLocal['state_id'];
+                $result['cityStatus'] = $dataLocal['city_status'];
+            }
+
+            return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param null $areaId
+     * @return array
+     * @throws Exception
+     */
+    public function get_area ($areaId=null) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_area()');
+
+            $result = array();
+            if (is_null($areaId)) {
+                $arr_dataLocal = Class_db::getInstance()->db_select('icn_area');
+                foreach ($arr_dataLocal as $dataLocal) {
+                    $row_result['areaId'] = $dataLocal['area_id'];
+                    $row_result['areaDesc'] = $dataLocal['area_desc'];
+                    $row_result['cityId'] = $dataLocal['city_id'];
+                    $row_result['areaStatus'] = $dataLocal['area_status'];
+                    array_push($result, $row_result);
+                }
+            } else {
+                $dataLocal = Class_db::getInstance()->db_select_single('icn_area', array('area_id'=>$areaId), null, 1);
+                $result['areaId'] = $dataLocal['area_id'];
+                $result['areaDesc'] = $dataLocal['area_desc'];
+                $result['cityId'] = $dataLocal['city_id'];
+                $result['areaStatus'] = $dataLocal['area_status'];
+            }
+
+            return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    public function get_site ($siteId=null) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_site()');
+
+            $result = array();
+            if (is_null($siteId)) {
+                $arr_dataLocal = Class_db::getInstance()->db_select('icn_site');
+                foreach ($arr_dataLocal as $dataLocal) {
+                    $row_result['siteId'] = $dataLocal['site_id'];
+                    $row_result['siteDesc'] = $dataLocal['site_desc'];
+                    $row_result['areaId'] = $dataLocal['area_id'];
+                    $row_result['siteStatus'] = $dataLocal['site_status'];
+                    array_push($result, $row_result);
+                }
+            } else {
+                $dataLocal = Class_db::getInstance()->db_select_single('icn_site', array('site_id'=>$siteId), null, 1);
+                $result['siteId'] = $dataLocal['site_id'];
+                $result['siteDesc'] = $dataLocal['site_desc'];
+                $result['areaId'] = $dataLocal['area_id'];
+                $result['siteStatus'] = $dataLocal['site_status'];
+            }
+
+            return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }
