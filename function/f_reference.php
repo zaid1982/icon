@@ -838,11 +838,11 @@ class Class_reference {
             $areaId = $params['areaId'];
             $siteStatus = $params['siteStatus'];
 
-            if (Class_db::getInstance()->db_count('icn_site', array('site_desc'=>$siteDesc, 'areaId'=>$areaId)) > 0) {
+            if (Class_db::getInstance()->db_count('icn_site', array('site_desc'=>$siteDesc, 'area_id'=>$areaId)) > 0) {
                 throw new Exception('(ErrCode:0531) [' . __LINE__ . '] - '.$constant::ERR_SITE_SIMILAR, 31);
             }
 
-            return Class_db::getInstance()->db_insert('icn_site', array('site_desc'=>$siteDesc, 'areaId'=>$areaId, 'site_status'=>$siteStatus));
+            return Class_db::getInstance()->db_insert('icn_site', array('site_desc'=>$siteDesc, 'area_id'=>$areaId, 'site_status'=>$siteStatus));
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
@@ -957,7 +957,7 @@ class Class_reference {
             if (Class_db::getInstance()->db_count('icn_site', array('site_id'=>$siteId)) == 0) {
                 throw new Exception('(ErrCode:0535) [' . __LINE__ . '] - Problem Type data not exist');
             }
-            if (Class_db::getInstance()->db_count('icn_ticket', array('site_id'=>$siteId)) > 0) {
+            if (Class_db::getInstance()->db_count('icn_workorder', array('site_id'=>$siteId)) > 0) {
                 throw new Exception('(ErrCode:0536) [' . __LINE__ . '] - '.$constant::ERR_SITE_DELETE, 31);
             }
 
