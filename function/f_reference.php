@@ -848,4 +848,126 @@ class Class_reference {
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    /**
+     * @param $siteId
+     * @param $put_vars
+     * @throws Exception
+     */
+    public function update_site ($siteId, $put_vars) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering update_site()');
+
+            if (empty($siteId)) {
+                throw new Exception('(ErrCode:0532) [' . __LINE__ . '] - Parameter siteId empty');
+            }
+            if (empty($put_vars)) {
+                throw new Exception('(ErrCode:0507) [' . __LINE__ . '] - Array put_vars empty');
+            }
+
+            if (!isset($put_vars['siteDesc']) || empty($put_vars['siteDesc'])) {
+                throw new Exception('(ErrCode:0528) [' . __LINE__ . '] - Parameter siteDesc empty');
+            }
+            if (!isset($put_vars['areaId']) || empty($put_vars['areaId'])) {
+                throw new Exception('(ErrCode:0529) [' . __LINE__ . '] - Parameter areaId empty');
+            }
+            if (!isset($put_vars['siteStatus']) || empty($put_vars['siteStatus'])) {
+                throw new Exception('(ErrCode:0530) [' . __LINE__ . '] - Parameter siteStatus empty');
+            }
+
+            $siteDesc = $put_vars['siteDesc'];
+            $areaId = $put_vars['areaId'];
+            $siteStatus = $put_vars['siteStatus'];
+
+            if (Class_db::getInstance()->db_count('icn_site', array('site_desc'=>$siteDesc, 'area_id'=>$areaId, 'site_id'=>'<>'.$siteId)) > 0) {
+                throw new Exception('(ErrCode:0531) [' . __LINE__ . '] - '.$constant::ERR_SITE_SIMILAR, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_site', array('site_desc'=>$siteDesc, 'site_id'=>$siteId, 'site_status'=>$siteStatus), array('site_id'=>$siteId));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $siteId
+     * @return mixed
+     * @throws Exception
+     */
+    public function deactivate_site ($siteId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering deactivate_site()');
+
+            if (empty($siteId)) {
+                throw new Exception('(ErrCode:0532) [' . __LINE__ . '] - Parameter siteId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_site', array('site_id'=>$siteId, 'site_status'=>'2')) > 0) {
+                throw new Exception('(ErrCode:0533) [' . __LINE__ . '] - '.$constant::ERR_SITE_DEACTIVATE, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_site', array('site_status'=>'2'), array('site_id'=>$siteId));
+            return Class_db::getInstance()->db_select_col('icn_site', array('site_id'=>$siteId), 'site_desc', null, 1);
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $siteId
+     * @return mixed
+     * @throws Exception
+     */
+    public function activate_site ($siteId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering activate_work_category()');
+
+            if (empty($siteId)) {
+                throw new Exception('(ErrCode:0532) [' . __LINE__ . '] - Parameter siteId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_site', array('site_id'=>$siteId, 'site_status'=>'1')) > 0) {
+                throw new Exception('(ErrCode:0534) [' . __LINE__ . '] - '.$constant::ERR_SITE_ACTIVATE, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_site', array('site_status'=>'1'), array('site_id'=>$siteId));
+            return Class_db::getInstance()->db_select_col('icn_site', array('site_id'=>$siteId), 'site_desc', null, 1);
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $siteId
+     * @return mixed
+     * @throws Exception
+     */
+    public function delete_site ($siteId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering delete_work_category()');
+
+            if (empty($siteId)) {
+                throw new Exception('(ErrCode:0532) [' . __LINE__ . '] - Parameter siteId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_site', array('site_id'=>$siteId)) == 0) {
+                throw new Exception('(ErrCode:0535) [' . __LINE__ . '] - Problem Type data not exist');
+            }
+            if (Class_db::getInstance()->db_count('icn_ticket', array('site_id'=>$siteId)) > 0) {
+                throw new Exception('(ErrCode:0536) [' . __LINE__ . '] - '.$constant::ERR_SITE_DELETE, 31);
+            }
+
+            $siteDesc = Class_db::getInstance()->db_select_col('icn_site', array('site_id'=>$siteId), 'site_desc', null, 1);
+            Class_db::getInstance()->db_delete('icn_site', array('site_id'=>$siteId));
+
+            return $siteDesc;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }
