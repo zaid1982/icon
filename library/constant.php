@@ -32,6 +32,7 @@ class Class_constant {
     const ERR_SITE_DEACTIVATE = 'Site already inactive';
     const ERR_SITE_ACTIVATE = 'Site already active';
     const ERR_SITE_DELETE = 'Site cannot be deleted because it\'s been selected in Work Order or Vendor';
+    const ERR_AREA_SIMILAR = 'Area already exist';
 
     const SUC_FORGOT_PASSWORD = 'Your password successfully reset. Please login with temporary password sent to your email.';
     const SUC_CHANGE_PASSWORD = 'Your password successfully changed';
@@ -55,5 +56,6 @@ class Class_constant {
     const SUC_SITE_DEACTIVATE = 'Site successfully deactivated';
     const SUC_SITE_ACTIVATE = 'Site successfully activated';
     const SUC_SITE_DELETE = 'Site successfully deleted';
+    const SUC_AREA_ADD = 'Area successfully added';
 
 }

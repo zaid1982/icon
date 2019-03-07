@@ -744,40 +744,6 @@ class Class_reference {
     }
 
     /**
-     * @param null $areaId
-     * @return array
-     * @throws Exception
-     */
-    public function get_area ($areaId=null) {
-        try {
-            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_area()');
-
-            $result = array();
-            if (is_null($areaId)) {
-                $arr_dataLocal = Class_db::getInstance()->db_select('icn_area');
-                foreach ($arr_dataLocal as $dataLocal) {
-                    $row_result['areaId'] = $dataLocal['area_id'];
-                    $row_result['areaDesc'] = $dataLocal['area_desc'];
-                    $row_result['cityId'] = $dataLocal['city_id'];
-                    $row_result['areaStatus'] = $dataLocal['area_status'];
-                    array_push($result, $row_result);
-                }
-            } else {
-                $dataLocal = Class_db::getInstance()->db_select_single('icn_area', array('area_id'=>$areaId), null, 1);
-                $result['areaId'] = $dataLocal['area_id'];
-                $result['areaDesc'] = $dataLocal['area_desc'];
-                $result['cityId'] = $dataLocal['city_id'];
-                $result['areaStatus'] = $dataLocal['area_status'];
-            }
-
-            return $result;
-        } catch (Exception $ex) {
-            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
-        }
-    }
-
-    /**
      * @param null $siteId
      * @return array
      * @throws Exception
@@ -965,6 +931,73 @@ class Class_reference {
             Class_db::getInstance()->db_delete('icn_site', array('site_id'=>$siteId));
 
             return $siteDesc;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param null $areaId
+     * @return array
+     * @throws Exception
+     */
+    public function get_area ($areaId=null) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_area()');
+
+            $result = array();
+            if (is_null($areaId)) {
+                $arr_dataLocal = Class_db::getInstance()->db_select('icn_area');
+                foreach ($arr_dataLocal as $dataLocal) {
+                    $row_result['areaId'] = $dataLocal['area_id'];
+                    $row_result['areaDesc'] = $dataLocal['area_desc'];
+                    $row_result['cityId'] = $dataLocal['city_id'];
+                    $row_result['areaStatus'] = $dataLocal['area_status'];
+                    array_push($result, $row_result);
+                }
+            } else {
+                $dataLocal = Class_db::getInstance()->db_select_single('icn_area', array('area_id'=>$areaId), null, 1);
+                $result['areaId'] = $dataLocal['area_id'];
+                $result['areaDesc'] = $dataLocal['area_desc'];
+                $result['cityId'] = $dataLocal['city_id'];
+                $result['areaStatus'] = $dataLocal['area_status'];
+            }
+
+            return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    public function add_area ($params) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering add_area()');
+
+            if (empty($params)) {
+                throw new Exception('(ErrCode:0502) [' . __LINE__ . '] - Array params empty');
+            }
+            if (!array_key_exists('areaDesc', $params) || empty($params['areaDesc'])) {
+                throw new Exception('(ErrCode:0537) [' . __LINE__ . '] - Parameter areaDesc empty');
+            }
+            if (!array_key_exists('cityId', $params) || empty($params['cityId'])) {
+                throw new Exception('(ErrCode:0538) [' . __LINE__ . '] - Parameter cityId empty');
+            }
+            if (!array_key_exists('areaStatus', $params) || empty($params['areaStatus'])) {
+                throw new Exception('(ErrCode:0539) [' . __LINE__ . '] - Parameter areaStatus empty');
+            }
+
+            $areaDesc = $params['areaDesc'];
+            $cityId = $params['cityId'];
+            $areaStatus = $params['areaStatus'];
+
+            if (Class_db::getInstance()->db_count('icn_area', array('area_desc'=>$areaDesc, 'city_id'=>$cityId)) > 0) {
+                throw new Exception('(ErrCode:0540) [' . __LINE__ . '] - '.$constant::ERR_AREA_SIMILAR, 31);
+            }
+
+            return Class_db::getInstance()->db_insert('icn_area', array('area_desc'=>$areaDesc, 'city_id'=>$cityId, 'area_status'=>$areaStatus));
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
