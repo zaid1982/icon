@@ -40,17 +40,17 @@ try {
     }
     else if ('POST' === $request_method) {
         $siteDesc = filter_input(INPUT_POST, 'siteDesc');
-        $worktypeId = filter_input(INPUT_POST, 'worktypeId');
+        $areaId = filter_input(INPUT_POST, 'areaId');
         $siteStatus = filter_input(INPUT_POST, 'siteStatus');
 
         $params = array(
             'siteDesc'=>$siteDesc,
-            'worktypeId'=>$worktypeId,
+            'areaId'=>$areaId,
             'siteStatus'=>$siteStatus
         );
 
         $result = $fn_reference->add_site($params);
-        $fn_general->updateVersion(5);
+        $fn_general->updateVersion(8);
         $fn_general->save_audit('25', $jwt_data->userId, 'Site = ' . $siteDesc);
 
         $form_data['errmsg'] = $constant::SUC_SITE_ADD;
@@ -65,19 +65,19 @@ try {
 
         if ($action === 'update') {
             $fn_reference->update_site($siteId, $put_vars);
-            $fn_general->updateVersion(5);
+            $fn_general->updateVersion(8);
             $fn_general->save_audit('26', $jwt_data->userId, 'Site = ' . $put_vars['siteDesc']);
             $form_data['errmsg'] = $constant::SUC_SITE_EDIT;
         }
         else if ($action === 'deactivate') {
             $siteDesc = $fn_reference->deactivate_site($siteId);
-            $fn_general->updateVersion(5);
+            $fn_general->updateVersion(8);
             $fn_general->save_audit('27', $jwt_data->userId, 'Site = ' . $siteDesc);
             $form_data['errmsg'] = $constant::SUC_SITE_DEACTIVATE;
         }
         else if ($action === 'activate') {
             $siteDesc = $fn_reference->activate_site($siteId);
-            $fn_general->updateVersion(5);
+            $fn_general->updateVersion(8);
             $fn_general->save_audit('28', $jwt_data->userId, 'Site = ' . $siteDesc);
             $form_data['errmsg'] = $constant::SUC_SITE_ACTIVATE;
         } else {
@@ -90,7 +90,7 @@ try {
         $siteId = filter_input(INPUT_GET, 'siteId');
 
         $siteDesc = $fn_reference->delete_site($siteId);
-        $fn_general->updateVersion(5);
+        $fn_general->updateVersion(8);
         $fn_general->save_audit('29', $jwt_data->userId, 'Site = ' . $siteDesc);
 
         $form_data['errmsg'] = $constant::SUC_SITE_DELETE;

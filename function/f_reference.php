@@ -543,7 +543,7 @@ class Class_reference {
             $worktypeId = $params['worktypeId'];
             $workcategoryStatus = $params['workcategoryStatus'];
 
-            if (Class_db::getInstance()->db_count('icn_workcategory', array('workcategory_desc'=>$workcategoryDesc)) > 0) {
+            if (Class_db::getInstance()->db_count('icn_workcategory', array('workcategory_desc'=>$workcategoryDesc, 'worktype_id'=>$worktypeId)) > 0) {
                 throw new Exception('(ErrCode:0522) [' . __LINE__ . '] - '.$constant::ERR_WORK_CATEGORY_SIMILAR, 31);
             }
 
@@ -777,6 +777,11 @@ class Class_reference {
         }
     }
 
+    /**
+     * @param null $siteId
+     * @return array
+     * @throws Exception
+     */
     public function get_site ($siteId=null) {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_site()');
@@ -800,6 +805,44 @@ class Class_reference {
             }
 
             return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $params
+     * @return mixed
+     * @throws Exception
+     */
+    public function add_site ($params) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering add_site()');
+
+            if (empty($params)) {
+                throw new Exception('(ErrCode:0502) [' . __LINE__ . '] - Array params empty');
+            }
+            if (!array_key_exists('siteDesc', $params) || empty($params['siteDesc'])) {
+                throw new Exception('(ErrCode:0528) [' . __LINE__ . '] - Parameter siteDesc empty');
+            }
+            if (!array_key_exists('areaId', $params) || empty($params['areaId'])) {
+                throw new Exception('(ErrCode:0529) [' . __LINE__ . '] - Parameter areaId empty');
+            }
+            if (!array_key_exists('siteStatus', $params) || empty($params['siteStatus'])) {
+                throw new Exception('(ErrCode:0530) [' . __LINE__ . '] - Parameter siteStatus empty');
+            }
+
+            $siteDesc = $params['siteDesc'];
+            $areaId = $params['areaId'];
+            $siteStatus = $params['siteStatus'];
+
+            if (Class_db::getInstance()->db_count('icn_site', array('site_desc'=>$siteDesc, 'areaId'=>$areaId)) > 0) {
+                throw new Exception('(ErrCode:0531) [' . __LINE__ . '] - '.$constant::ERR_SITE_SIMILAR, 31);
+            }
+
+            return Class_db::getInstance()->db_insert('icn_site', array('site_desc'=>$siteDesc, 'areaId'=>$areaId, 'site_status'=>$siteStatus));
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
