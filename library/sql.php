@@ -94,6 +94,18 @@ class Class_sql
                 $sql = "SELECT icn_workorder.* 
                 FROM icn_workorder 
                 LEFT JOIN icn_workcategory ON icn_workcategory.workcategory_id = icn_workorder.workcategory_id";
+            } else if ($title === 'vw_workorder') {
+                $sql = "SELECT 
+                  icn_workorder.*,
+                  icn_workcategory.worktype_id AS worktype_id,
+                  icn_site.area_id AS area_id,
+                  icn_area.city_id AS city_id,
+                  CONCAT(sys_user.user_first_name, ' ', sys_user.user_last_name) AS requester_name
+                FROM icn_workorder 
+                LEFT JOIN icn_workcategory ON icn_workcategory.workcategory_id = icn_workorder.workcategory_id
+                LEFT JOIN icn_site ON icn_site.site_id = icn_workorder.site_id
+                LEFT JOIN icn_area ON icn_area.area_id = icn_site.area_id
+                LEFT JOIN sys_user ON sys_user.user_id = icn_workorder.workorder_created_by";
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }

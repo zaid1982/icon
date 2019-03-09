@@ -352,6 +352,9 @@ class Class_ticket {
                 array_push($result['ticketImages'], $this->fn_general->getDocument($ticketImage['upload_id']));
             }
 
+            $workorderId = Class_db::getInstance()->db_select_col('icn_workorder', array('ticket_id'=>$ticketId), 'workorder_id');
+            $result['workorderId'] = $this->fn_general->clear_null($workorderId);
+
             return $result;
         }
         catch(Exception $ex) {

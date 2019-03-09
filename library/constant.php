@@ -33,7 +33,8 @@ class Class_constant {
     const ERR_SITE_ACTIVATE = 'Site already active';
     const ERR_SITE_DELETE = 'Site cannot be deleted because it\'s been selected in Work Order or Vendor';
     const ERR_AREA_SIMILAR = 'Area already exist';
-    const ERR_CITY_SIMILAR = 'Area already exist';
+    const ERR_CITY_SIMILAR = 'City already exist';
+    const ERR_WORKORDER_SIMILAR = 'Workorder already created. Please refresh or go back to main page.';
 
     const SUC_FORGOT_PASSWORD = 'Your password successfully reset. Please login with temporary password sent to your email.';
     const SUC_CHANGE_PASSWORD = 'Your password successfully changed';
