@@ -100,12 +100,29 @@ class Class_sql
                   icn_workcategory.worktype_id AS worktype_id,
                   icn_site.area_id AS area_id,
                   icn_area.city_id AS city_id,
-                  CONCAT(sys_user.user_first_name, ' ', sys_user.user_last_name) AS requester_name
+                  CONCAT(sys_user.user_first_name, ' ', sys_user.user_last_name) AS requester_name,
+                  sys_user_profile.user_contact_no AS requester_phone
                 FROM icn_workorder 
                 LEFT JOIN icn_workcategory ON icn_workcategory.workcategory_id = icn_workorder.workcategory_id
                 LEFT JOIN icn_site ON icn_site.site_id = icn_workorder.site_id
                 LEFT JOIN icn_area ON icn_area.area_id = icn_site.area_id
-                LEFT JOIN sys_user ON sys_user.user_id = icn_workorder.workorder_created_by";
+                LEFT JOIN sys_user ON sys_user.user_id = icn_workorder.workorder_created_by
+                LEFT JOIN sys_user_profile ON sys_user_profile.user_id = sys_user.user_id AND sys_user_profile.user_profile_status = 1";
+            } else if ($title === 'vw_contractor') {
+                $sql = "SELECT
+                    icn_contractor.*,
+                    sys_address.address_desc,
+                    sys_address.address_postcode,
+                    sys_address.address_city,
+                    ref_state.state_desc,
+                    contractor_site.sites
+                FROM icn_contractor
+                LEFT JOIN sys_address ON sys_address.address_id = icn_contractor.address_id
+                LEFT JOIN ref_state ON ref_state.state_id = sys_address.state_id
+                LEFT JOIN 
+                    (SELECT contractor_id, GROUP_CONCAT(site_id) AS sites 
+                    FROM icn_contractor_site 
+                    GROUP BY contractor_id) contractor_site ON contractor_site.contractor_id = icn_contractor.contractor_id";
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }

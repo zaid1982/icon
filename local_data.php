@@ -4,11 +4,13 @@ require_once 'function/db.php';
 require_once 'function/f_general.php';
 require_once 'function/f_login.php';
 require_once 'function/f_reference.php';
+require_once 'function/f_contractor.php';
 
 $constant = new Class_constant();
 $fn_general = new Class_general();
 $fn_login = new Class_login();
 $fn_reference = new Class_reference();
+$fn_contractor = new Class_contractor();
 $api_name = 'api_local_data';
 $is_transaction = false;
 $form_data = array('success'=>false, 'result'=>'', 'error'=>'', 'errmsg'=>'');
@@ -17,9 +19,10 @@ $result = '';
 /* Error code range - 2300 */ 
 try {   
     Class_db::getInstance()->db_connect();
-    $request_method = filter_input(INPUT_SERVER, 'REQUEST_METHOD'); 
+    //$request_method = filter_input(INPUT_SERVER, 'REQUEST_METHOD');
+    $request_method = $_SERVER['REQUEST_METHOD'];
     $fn_general->log_debug($api_name, __LINE__, 'Request method = '.$request_method);
-    
+
     $headers = apache_request_headers();
     if (!isset($headers['Authorization'])) {
         throw new Exception('(ErrCode:2301) [' . __LINE__ . '] - Parameter Authorization empty');
@@ -57,6 +60,9 @@ try {
                 break;
             case 'icon_site':
                 $result = $fn_reference->get_site();
+                break;
+            case 'icon_contractor':
+                $result = $fn_contractor->get_contractor_list();
                 break;
             default:
                 throw new Exception('(ErrCode:2303) [' . __LINE__ . '] - Parameter name invalid ('.$name.')');
