@@ -136,6 +136,7 @@ class Class_workorder {
             $result['workorderId'] = $workorder['workorder_id'];
             $result['workorderNo'] = $this->fn_general->clear_null($workorder['workorder_no']);
             $result['problemtypeId'] = $workorder['problemtype_id'];
+            $result['worktypeId'] = $workorder['worktype_id'];
             $result['workcategoryId'] = $workorder['workcategory_id'];
             $result['siteId'] = $this->fn_general->clear_null($workorder['site_id']);
             $result['areaId'] = $this->fn_general->clear_null($workorder['area_id']);
