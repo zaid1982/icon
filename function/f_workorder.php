@@ -147,8 +147,8 @@ class Class_workorder {
             $result['contractorId'] = $this->fn_general->clear_null($workorder['contractor_id']);
             $result['workorderSiteType'] = $this->fn_general->clear_null($workorder['workorder_site_type']);
             $result['workorderTimeComplaint'] = str_replace('-', '/', $workorder['workorder_time_complaint']);
-            $result['workorderDesc'] = $workorder['workorder_desc'];
-            $result['workorderLocationDesc'] = $workorder['workorder_location_desc'];
+            $result['workorderDesc'] = $this->fn_general->clear_null($workorder['workorder_desc']);
+            $result['workorderLocationDesc'] = $this->fn_general->clear_null($workorder['workorder_location_desc']);
             $result['workorderStatus'] = $workorder['workorder_status'];
             $result['requesterName'] = $workorder['requester_name'];
             $result['requesterPhone'] = $workorder['requester_phone'];
