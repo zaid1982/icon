@@ -159,4 +159,78 @@ class Class_workorder {
             throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    public function save_workorder ($workorderId, $put_vars) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering update_workorder()');
+
+            if (empty($workorderId)) {
+                throw new Exception('(ErrCode:0705) [' . __LINE__ . '] - Parameter workorderId empty');
+            }
+            if (empty($put_vars)) {
+                throw new Exception('(ErrCode:0706) [' . __LINE__ . '] - Array put_vars empty');
+            }
+
+            if (!isset($put_vars['siteId'])) {
+                throw new Exception('(ErrCode:0707) [' . __LINE__ . '] - Parameter siteId not exist');
+            }
+            if (!isset($put_vars['areaId'])) {
+                throw new Exception('(ErrCode:0708) [' . __LINE__ . '] - Parameter areaId not exist');
+            }
+            if (!isset($put_vars['cityId'])) {
+                throw new Exception('(ErrCode:0709) [' . __LINE__ . '] - Parameter cityId not exist');
+            }
+            if (!isset($put_vars['contractorId'])) {
+                throw new Exception('(ErrCode:0710) [' . __LINE__ . '] - Parameter contractorId not exist');
+            }
+            if (!isset($put_vars['worktypeId'])) {
+                throw new Exception('(ErrCode:0711) [' . __LINE__ . '] - Parameter worktypeId not exist');
+            }
+            if (!isset($put_vars['workorderSiteType'])) {
+                throw new Exception('(ErrCode:0712) [' . __LINE__ . '] - Parameter workorderSiteType not exist');
+            }
+            if (!isset($put_vars['workcategoryId'])) {
+                throw new Exception('(ErrCode:0713) [' . __LINE__ . '] - Parameter workcategoryId not exist');
+            }
+            if (!isset($put_vars['workorderDesc'])) {
+                throw new Exception('(ErrCode:0714) [' . __LINE__ . '] - Parameter workorderDesc not exist');
+            }
+            if (!isset($put_vars['workorderBlock'])) {
+                throw new Exception('(ErrCode:0715) [' . __LINE__ . '] - Parameter workorderBlock not exist');
+            }
+            if (!isset($put_vars['workorderLevel'])) {
+                throw new Exception('(ErrCode:0716) [' . __LINE__ . '] - Parameter workorderLevel not exist');
+            }
+            if (!isset($put_vars['workorderUnit'])) {
+                throw new Exception('(ErrCode:0717) [' . __LINE__ . '] - Parameter workorderUnit not exist');
+            }
+            if (!isset($put_vars['workorderLocationDesc'])) {
+                throw new Exception('(ErrCode:0718) [' . __LINE__ . '] - Parameter workorderLocationDesc not exist');
+            }
+            if (Class_db::getInstance()->db_count('icn_workorder', array('workorder_id'=>$workorderId, 'workorder_status'=>'5')) == 0) {
+                throw new Exception('(ErrCode:0719) [' . __LINE__ . '] - '.$constant::ERR_WORKORDER_SUBMITTED, 31);
+            }
+
+            $arrUpdate = array(
+                'site_id' => $put_vars['siteId'],
+                'area_id' => $put_vars['areaId'],
+                'city_id' => $put_vars['cityId'],
+                'contractor_id' => $put_vars['contractorId'],
+                'worktype_id' => $put_vars['worktypeId'],
+                'workorder_site_type' => $put_vars['workorderSiteType'],
+                'workcategory_id' => $put_vars['workcategoryId'],
+                'workorder_desc' => $put_vars['workorderDesc'],
+                'workorder_block' => $put_vars['workorderBlock'],
+                'workorder_level' => $put_vars['workorderLevel'],
+                'workorder_unit' => $put_vars['workorderUnit'],
+                'workorderLocation_desc' => $put_vars['workorderLocationDesc']
+            );
+
+            Class_db::getInstance()->db_update('icn_workorder', $arrUpdate, array('workorder_id'=>$workorderId));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }

@@ -35,6 +35,7 @@ class Class_constant {
     const ERR_AREA_SIMILAR = 'Area already exist';
     const ERR_CITY_SIMILAR = 'City already exist';
     const ERR_WORKORDER_SIMILAR = 'Workorder already created. Please refresh or go back to main page.';
+    const ERR_WORKORDER_SUBMITTED = 'Workorder already submitted. Please refresh or go back to main page.';
 
     const SUC_FORGOT_PASSWORD = 'Your password successfully reset. Please login with temporary password sent to your email.';
     const SUC_CHANGE_PASSWORD = 'Your password successfully changed';
