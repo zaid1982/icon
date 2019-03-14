@@ -44,6 +44,12 @@ try {
             $ticketId = filter_input(INPUT_POST, 'ticketId');
             $result = $fn_workorder->create_new_workorder($ticketId, $jwt_data->userId);
             $fn_general->save_audit('32', $jwt_data->userId, 'workorder_id = ' . $result);
+        }
+        else if ($action === 'submit_workorder') {
+            $workorderId = filter_input(INPUT_POST, 'workorderId');
+
+            $fn_general->save_audit('35', $jwt_data->userId, 'workorder_id = ' . $workorderId);
+            $form_data['errmsg'] = $constant::SUC_WORKORDER_SUBMIT;
         } else {
             throw new Exception('(ErrCode:3102) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
         }
@@ -68,19 +74,21 @@ try {
         parse_str($put_data, $put_vars);
         $action = $put_vars['action'];
 
-        if (!is_null($workorderId)) {
-            $result = $fn_workorder->get_workorder($workorderId);
-            $fn_general->save_audit('34', $jwt_data->userId, 'workorder_id = '.$workorderId);
-            $form_data['errmsg'] = $constant::SUC_WORKORDER_SAVE;
+        if (empty($workorderId)) {
+            throw new Exception('(ErrCode:3104) [' . __LINE__ . '] - Parameter workorderId empty');
         }
 
         Class_db::getInstance()->db_beginTransaction();
         $is_transaction = true;
 
-        if ($action === 'save_workorder') {
+        if ($action === 'save_workorder' || $action === 'save_workorder2') {
             $fn_workorder->save_workorder($workorderId, $put_vars);
+            $fn_general->save_audit('34', $jwt_data->userId, 'workorder_id = '.$workorderId);
+            if ($action === 'save_workorder') {
+                $form_data['errmsg'] = $constant::SUC_WORKORDER_SAVE;
+            }
         } else {
-            throw new Exception('(ErrCode:2402) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
+            throw new Exception('(ErrCode:3103) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
         }
 
         Class_db::getInstance()->db_commit();

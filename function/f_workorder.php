@@ -229,7 +229,7 @@ class Class_workorder {
                 'workorder_block' => $put_vars['workorderBlock'],
                 'workorder_level' => $put_vars['workorderLevel'],
                 'workorder_unit' => $put_vars['workorderUnit'],
-                'workorderLocation_desc' => $put_vars['workorderLocationDesc']
+                'workorder_location_desc' => $put_vars['workorderLocationDesc']
             );
             Class_db::getInstance()->db_update('icn_workorder', $arrUpdate, array('workorder_id'=>$workorderId));
         } catch (Exception $ex) {
