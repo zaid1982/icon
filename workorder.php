@@ -61,6 +61,31 @@ try {
 
         $form_data['result'] = $result;
         $form_data['success'] = true;
+    }
+    else if ('PUT' === $request_method) {
+        $workorderId = filter_input(INPUT_GET, 'workorderId');
+        $put_data = file_get_contents("php://input");
+        parse_str($put_data, $put_vars);
+        $action = $put_vars['action'];
+
+        if (!is_null($workorderId)) {
+            $result = $fn_workorder->get_workorder($workorderId);
+            $fn_general->save_audit('34', $jwt_data->userId, 'workorder_id = '.$workorderId);
+            $form_data['errmsg'] = $constant::SUC_WORKORDER_SAVE;
+        }
+
+        Class_db::getInstance()->db_beginTransaction();
+        $is_transaction = true;
+
+        if ($action === 'save_workorder') {
+            $fn_workorder->save_workorder($workorderId, $put_vars);
+        } else {
+            throw new Exception('(ErrCode:2402) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
+        }
+
+        Class_db::getInstance()->db_commit();
+        $form_data['result'] = $result;
+        $form_data['success'] = true;
     } else {
         throw new Exception('(ErrCode:3100) [' . __LINE__ . '] - Wrong Request Method');
     }

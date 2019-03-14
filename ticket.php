@@ -91,7 +91,7 @@ try {
             $fn_task->submit_task($taskId, $jwt_data->userId, $status='9');
             $fn_ticket->submit_ticket($ticketId, $ticketNo, $taskId);
             $fn_general->save_audit('9', $jwt_data->userId, 'ticket_no = '.$ticketNo);
-            $form_data['errmsg'] = 'Your ticket has been successfully submitted. Your ticket number is '.$ticketNo.' for future reference.';
+            $form_data['errmsg'] = 'Your ticket successfully submitted. Your ticket number is '.$ticketNo.' for future reference.';
         } else {
             throw new Exception('(ErrCode:2402) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
         }

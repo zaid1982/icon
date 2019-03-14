@@ -160,6 +160,11 @@ class Class_workorder {
         }
     }
 
+    /**
+     * @param $workorderId
+     * @param $put_vars
+     * @throws Exception
+     */
     public function save_workorder ($workorderId, $put_vars) {
         $constant = new Class_constant();
         try {
@@ -226,7 +231,6 @@ class Class_workorder {
                 'workorder_unit' => $put_vars['workorderUnit'],
                 'workorderLocation_desc' => $put_vars['workorderLocationDesc']
             );
-
             Class_db::getInstance()->db_update('icn_workorder', $arrUpdate, array('workorder_id'=>$workorderId));
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
