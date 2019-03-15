@@ -248,11 +248,11 @@ class Class_task {
 
             $arrUpdTask = array('task_current'=>'2', 'role_id'=>$roleId, 'group_id'=>$groupId, 'task_remark'=>$remark, 'task_time_submit'=>'Now()', 'task_status'=>$status);
             if ($checkpointClaimType == '2') {
-                $arrUpdTask['task_time_claimed'] = 'Now()';
                 if (empty($taskClaimedUser)) {
                     throw new Exception('(ErrCode:0413) [' . __LINE__ . '] - Task supposed to be claimed first');
                 }
             } else {
+                $arrUpdTask['task_time_claimed'] = 'Now()';
                 $arrUpdTask['task_claimed_user'] = $userId;
             }
             Class_db::getInstance()->db_update('wfl_task', $arrUpdTask, array('task_id'=>$taskId));

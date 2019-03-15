@@ -237,4 +237,56 @@ class Class_workorder {
             throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    /**
+     * @param $workorderId
+     * @param $statusCheck
+     * @param $checkpointCheck
+     * @return mixed
+     * @throws Exception
+     */
+    public function get_task_info ($workorderId, $statusCheck, $checkpointCheck) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_task_id()');
+
+            if (empty($workorderId)) {
+                throw new Exception('(ErrCode:0705) [' . __LINE__ . '] - Parameter workorderId empty');
+            }
+            if (empty($statusCheck)) {
+                throw new Exception('(ErrCode:0720) [' . __LINE__ . '] - Parameter statusCheck empty');
+            }
+            if (empty($checkpointCheck)) {
+                throw new Exception('(ErrCode:0721) [' . __LINE__ . '] - Parameter checkpointCheck empty');
+            }
+
+            $workorder = Class_db::getInstance()->db_select_single('icn_workorder', array('workorder_id'=>$workorderId, 'workorder_status'=>'('.$statusCheck.')'), null, 1);
+            $transactionId = Class_db::getInstance()->db_select_col('icn_ticket', array('ticket_id'=>$workorder['ticket_id']), 'transaction_id', null, 1);
+            $taskId = Class_db::getInstance()->db_select_col('wfl_task', array('transaction_id'=>$transactionId, 'checkpoint_id'=>$checkpointCheck, 'task_current'=>'1'), 'task_id', null, 1);
+            $groupId = Class_db::getInstance()->db_select_col('icn_contractor', array('contractor_id'=>$workorder['contractor_id']), 'group_id', null, 1);
+            return array('taskId'=>$taskId, 'groupId'=>$groupId);
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    public function submit_workorder ($workorderId, $taskId) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering submit_workorder()');
+
+            if (empty($workorderId)) {
+                throw new Exception('(ErrCode:0705) [' . __LINE__ . '] - Parameter workorderId empty');
+            }
+            if (empty($taskId)) {
+                throw new Exception('(ErrCode:0722) [' . __LINE__ . '] - Parameter taskId empty');
+            }
+
+            $transactionId = Class_db::getInstance()->db_select_col('wfl_task', array('task_id'=>$taskId), 'transaction_id', null, 1);
+            Class_db::getInstance()->db_update('icn_workorder', array('transaction_id'=>$transactionId, 'workorder_time_submit'=>'Now()', 'workorder_status'=>'12'), array('workorder_id'=>$workorderId));
+            Class_db::getInstance()->db_update('icn_ticket', array('ticket_status'=>'12'), array('transaction_id'=>$transactionId));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }

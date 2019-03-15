@@ -44,12 +44,6 @@ try {
             $ticketId = filter_input(INPUT_POST, 'ticketId');
             $result = $fn_workorder->create_new_workorder($ticketId, $jwt_data->userId);
             $fn_general->save_audit('32', $jwt_data->userId, 'workorder_id = ' . $result);
-        }
-        else if ($action === 'submit_workorder') {
-            $workorderId = filter_input(INPUT_POST, 'workorderId');
-
-            $fn_general->save_audit('35', $jwt_data->userId, 'workorder_id = ' . $workorderId);
-            $form_data['errmsg'] = $constant::SUC_WORKORDER_SUBMIT;
         } else {
             throw new Exception('(ErrCode:3102) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
         }
@@ -83,10 +77,17 @@ try {
 
         if ($action === 'save_workorder' || $action === 'save_workorder2') {
             $fn_workorder->save_workorder($workorderId, $put_vars);
-            $fn_general->save_audit('34', $jwt_data->userId, 'workorder_id = '.$workorderId);
+            $fn_general->save_audit('34', $jwt_data->userId, 'workorder_id = ' . $workorderId);
             if ($action === 'save_workorder') {
                 $form_data['errmsg'] = $constant::SUC_WORKORDER_SAVE;
             }
+        }
+        else if ($action === 'submit_workorder') {
+            $taskInfo = $fn_workorder->get_task_info($workorderId, '5', '2');
+            $taskIdNew = $fn_task->submit_task($taskInfo['taskId'], $jwt_data->userId, '9', '', '', '', $taskInfo['groupId']);
+            $fn_workorder->submit_workorder($workorderId, $taskIdNew);
+            $fn_general->save_audit('35', $jwt_data->userId, 'workorder_id = ' . $workorderId);
+            $form_data['errmsg'] = $constant::SUC_WORKORDER_SUBMIT;
         } else {
             throw new Exception('(ErrCode:3103) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
         }

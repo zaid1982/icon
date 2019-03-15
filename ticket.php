@@ -88,7 +88,7 @@ try {
             $ticketNo = $fn_ticket->generate_ticket_no();
             $taskId = $fn_task->create_new_task('1', $jwt_data->userId, '3', '3', $ticketNo);
             $fn_ticket->update_ticket($ticketId, $put_vars, $jwt_data->userId);
-            $fn_task->submit_task($taskId, $jwt_data->userId, $status='9');
+            $fn_task->submit_task($taskId, $jwt_data->userId, '9');
             $fn_ticket->submit_ticket($ticketId, $ticketNo, $taskId);
             $fn_general->save_audit('9', $jwt_data->userId, 'ticket_no = '.$ticketNo);
             $form_data['errmsg'] = 'Your ticket successfully submitted. Your ticket number is '.$ticketNo.' for future reference.';
