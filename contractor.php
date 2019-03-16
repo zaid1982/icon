@@ -77,6 +77,7 @@ try {
 
         if ($action === 'save_contractor' || $action === 'save_contractor2') {
             $fn_contractor->save_contractor($contractorId, $put_vars);
+            $fn_general->updateVersion(9);
             $fn_general->save_audit('37', $jwt_data->userId, 'contractor_id = ' . $contractorId);
             if ($action === 'save_contractor') {
                 $form_data['errmsg'] = $constant::SUC_CONTRACTOR_SAVE;
