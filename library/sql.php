@@ -108,15 +108,27 @@ class Class_sql
                     sys_address.address_desc,
                     sys_address.address_postcode,
                     sys_address.address_city,
+                    ref_state.state_id,
                     ref_state.state_desc,
-                    contractor_site.sites
+                    CONCAT(sys_user.user_first_name, ' ', sys_user.user_last_name) AS created_by,
+                    contractor_site.sites                    
                 FROM icn_contractor
                 LEFT JOIN sys_address ON sys_address.address_id = icn_contractor.address_id
                 LEFT JOIN ref_state ON ref_state.state_id = sys_address.state_id
+                LEFT JOIN sys_user ON sys_user.user_id = icn_contractor.contractor_created_by
                 LEFT JOIN 
                     (SELECT contractor_id, GROUP_CONCAT(site_id) AS sites 
                     FROM icn_contractor_site 
                     GROUP BY contractor_id) contractor_site ON contractor_site.contractor_id = icn_contractor.contractor_id";
+            } else if ($title === 'vw_contractor_user') {
+                $sql = "SELECT
+                    sys_user_group.*,
+                    CONCAT(sys_user.user_first_name, ' ', sys_user.user_last_name) AS user_fullname,
+                    sys_user_profile.user_contact_no,
+                    sys_user_profile.user_email
+                FROM sys_user_group
+                LEFT JOIN sys_user ON sys_user.user_id = sys_user_group.user_id
+                LEFT JOIN sys_user_profile ON sys_user_profile.user_id = sys_user_group.user_id AND user_profile_status = 1";
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }

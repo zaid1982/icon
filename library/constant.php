@@ -61,7 +61,8 @@ class Class_constant {
     const SUC_SITE_DELETE = 'Site successfully deleted';
     const SUC_AREA_ADD = 'Area successfully added';
     const SUC_AREA_CITY = 'City successfully added';
-    const SUC_WORKORDER_SAVE = 'Work order successfully saved';
+    const SUC_WORKORDER_SAVE = 'Work order successfully updated';
     const SUC_WORKORDER_SUBMIT = 'Work order successfully submitted to contractor\'s supervisor';
+    const SUC_CONTRACTOR_SAVE = 'Contractor successfully updated';
 
 }

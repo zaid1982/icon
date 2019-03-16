@@ -37,11 +37,58 @@ try {
         $contractorId = filter_input(INPUT_GET, 'contractorId');
 
         if (!is_null($contractorId)) {
-
+            $result = $fn_contractor->get_contractor($contractorId);
         } else {
             $result = $fn_contractor->get_contractor_list();
         }
 
+        $form_data['result'] = $result;
+        $form_data['success'] = true;
+    }
+    else if ('POST' === $request_method) {
+        $action = filter_input(INPUT_POST, 'action');
+        Class_db::getInstance()->db_beginTransaction();
+        $is_transaction = true;
+
+        if ($action === 'create_draft') {
+            $result = $fn_contractor->create_draft($jwt_data->userId);
+            $fn_general->updateVersion(9);
+            $fn_general->save_audit('36', $jwt_data->userId, 'contractor_id = ' . $result);
+        } else {
+            throw new Exception('(ErrCode:3202) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
+        }
+
+        Class_db::getInstance()->db_commit();
+        $form_data['result'] = $result;
+        $form_data['success'] = true;
+    }
+    else if ('PUT' === $request_method) {
+        $contractorId = filter_input(INPUT_GET, 'contractorId');
+        $put_data = file_get_contents("php://input");
+        parse_str($put_data, $put_vars);
+        $action = $put_vars['action'];
+
+        if (empty($contractorId)) {
+            throw new Exception('(ErrCode:3203) [' . __LINE__ . '] - Parameter contractorId empty');
+        }
+
+        Class_db::getInstance()->db_beginTransaction();
+        $is_transaction = true;
+
+        if ($action === 'save_contractor' || $action === 'save_contractor2') {
+            $fn_contractor->save_contractor($contractorId, $put_vars);
+            $fn_general->save_audit('37', $jwt_data->userId, 'contractor_id = ' . $contractorId);
+            if ($action === 'save_contractor') {
+                $form_data['errmsg'] = $constant::SUC_CONTRACTOR_SAVE;
+            }
+        }
+        else if ($action === 'submit_workorder') {
+
+        } else {
+            throw new Exception('(ErrCode:3103) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
+        }
+
+        Class_db::getInstance()->db_commit();
         $form_data['result'] = $result;
         $form_data['success'] = true;
     } else {

@@ -168,7 +168,7 @@ class Class_workorder {
     public function save_workorder ($workorderId, $put_vars) {
         $constant = new Class_constant();
         try {
-            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering update_workorder()');
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering save_workorder()');
 
             if (empty($workorderId)) {
                 throw new Exception('(ErrCode:0705) [' . __LINE__ . '] - Parameter workorderId empty');
