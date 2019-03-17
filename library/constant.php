@@ -36,6 +36,7 @@ class Class_constant {
     const ERR_CITY_SIMILAR = 'City already exist';
     const ERR_WORKORDER_SIMILAR = 'Workorder already created. Please refresh or go back to main page.';
     const ERR_WORKORDER_SUBMITTED = 'Workorder already submitted. Please refresh or go back to main page.';
+    const ERR_CONTRACTOR_SITE_SIMILAR = 'Site already exist';
 
     const SUC_FORGOT_PASSWORD = 'Your password successfully reset. Please login with temporary password sent to your email.';
     const SUC_CHANGE_PASSWORD = 'Your password successfully changed';
@@ -64,5 +65,7 @@ class Class_constant {
     const SUC_WORKORDER_SAVE = 'Work order successfully updated';
     const SUC_WORKORDER_SUBMIT = 'Work order successfully submitted to contractor\'s supervisor';
     const SUC_CONTRACTOR_SAVE = 'Contractor successfully updated';
+    const SUC_CONTRACTOR_SITE_ADD = 'Site successfully added';
+    const SUC_CONTRACTOR_SITE_DELETE = 'Site successfully deleted';
 
 }

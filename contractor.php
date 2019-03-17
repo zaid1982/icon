@@ -54,6 +54,15 @@ try {
             $result = $fn_contractor->create_draft($jwt_data->userId);
             $fn_general->updateVersion(9);
             $fn_general->save_audit('36', $jwt_data->userId, 'contractor_id = ' . $result);
+        }
+        else if ($action === 'add_contractor_site') {
+            $contractorId = filter_input(INPUT_POST, 'contractorId');
+            $siteId = filter_input(INPUT_POST, 'siteId');
+
+            $result = $fn_contractor->add_contractor_site($contractorId, $siteId);
+            $fn_general->updateVersion(9);
+            $fn_general->save_audit('36', $jwt_data->userId, 'contractor_id = ' . $contractorId . ', site_id = ' . $siteId);
+            $form_data['errmsg'] = $constant::SUC_CONTRACTOR_SITE_ADD;
         } else {
             throw new Exception('(ErrCode:3202) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
         }
@@ -92,6 +101,19 @@ try {
         Class_db::getInstance()->db_commit();
         $form_data['result'] = $result;
         $form_data['success'] = true;
+    }
+    else if ('DELETE' === $request_method) {
+        $contractorId = filter_input(INPUT_GET, 'contractorId');
+        $contractorSiteId = filter_input(INPUT_GET, 'contractorSiteId');
+
+        if (!is_null($contractorId)) {
+
+        }
+        else if (!is_null($contractorSiteId)) {
+            $fn_contractor->delete_contractor_site($contractorSiteId);
+            $fn_general->updateVersion(9);
+            $fn_general->save_audit('39', $jwt_data->userId, 'contractor_site_id = ' . $contractorSiteId);
+            $form_data['errmsg'] = $constant::SUC_CONTRACTOR_SITE_DELETE;        }
     } else {
         throw new Exception('(ErrCode:3200) [' . __LINE__ . '] - Wrong Request Method');
     }

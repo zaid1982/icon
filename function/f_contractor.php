@@ -183,6 +183,7 @@ class Class_contractor {
             $resultUser = array();
             $contractorUsers = Class_db::getInstance()->db_select('vw_contractor_user', array('group_id'=>$contractor['group_id']));
             foreach ($contractorUsers as $contractorUser) {
+                $row_result = array();
                 $row_result['userGroupId'] = $contractorUser['user_group_id'];
                 $row_result['userId'] = $contractorUser['user_id'];
                 $row_result['userFullname'] = $contractorUser['user_fullname'];
@@ -267,6 +268,53 @@ class Class_contractor {
                 'group_reg_no' => $put_vars['contractorRegNo']
             );
             Class_db::getInstance()->db_update('sys_group', $arrUpdateGroup, array('group_id'=>$contractor['group_id']));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $contractorId
+     * @param $siteId
+     * @return
+     * @throws Exception
+     */
+    public function add_contractor_site ($contractorId, $siteId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering add_contractor_site()');
+
+            if (empty($contractorId)) {
+                throw new Exception('(ErrCode:0803) [' . __LINE__ . '] - Parameter contractorId empty');
+            }
+            if (empty($siteId)) {
+                throw new Exception('(ErrCode:0810) [' . __LINE__ . '] - Parameter siteId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_contractor_site', array('contractor_id'=>$contractorId, 'site_id'=>$siteId)) > 0) {
+                throw new Exception('(ErrCode:0531) [' . __LINE__ . '] - '.$constant::ERR_CONTRACTOR_SITE_SIMILAR, 31);
+            }
+
+            return Class_db::getInstance()->db_insert('icn_contractor_site', array('contractor_id'=>$contractorId, 'site_id'=>$siteId));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $contractorSiteId
+     * @throws Exception
+     */
+    public function delete_contractor_site ($contractorSiteId) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering delete_contractor_site()');
+
+            if (empty($contractorSiteId)) {
+                throw new Exception('(ErrCode:0814) [' . __LINE__ . '] - Parameter contractorSiteId empty');
+            }
+
+            Class_db::getInstance()->db_delete('icn_contractor_site', array('contractor_site_id'=>$contractorSiteId));
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
