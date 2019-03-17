@@ -1046,4 +1046,29 @@ class Class_reference {
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function get_role () {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_role()');
+
+            $result = array();
+            $arr_dataLocal = Class_db::getInstance()->db_select('ref_role');
+            foreach ($arr_dataLocal as $dataLocal) {
+                $row_result['roleId'] = $dataLocal['role_id'];
+                $row_result['roleDesc'] = $dataLocal['role_desc'];
+                $row_result['roleType'] = $this->fn_general->clear_null($dataLocal['role_type']);
+                $row_result['roleStatus'] = $dataLocal['role_status'];
+                array_push($result, $row_result);
+            }
+
+            return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }

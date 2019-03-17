@@ -125,10 +125,17 @@ class Class_sql
                     sys_user_group.*,
                     CONCAT(sys_user.user_first_name, ' ', sys_user.user_last_name) AS user_fullname,
                     sys_user_profile.user_contact_no,
-                    sys_user_profile.user_email
+                    sys_user_profile.user_email,
+	                user_role.roles,
+                    sys_user.user_status
                 FROM sys_user_group
                 LEFT JOIN sys_user ON sys_user.user_id = sys_user_group.user_id
-                LEFT JOIN sys_user_profile ON sys_user_profile.user_id = sys_user_group.user_id AND user_profile_status = 1";
+                LEFT JOIN sys_user_profile ON sys_user_profile.user_id = sys_user_group.user_id AND user_profile_status = 1
+                LEFT JOIN 
+                    (SELECT user_id, GROUP_CONCAT(role_id) AS roles 
+                    FROM sys_user_role 
+                    WHERE role_id IN (5,6)
+                    GROUP BY user_id) user_role ON user_role.user_id = sys_user.user_id";
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }

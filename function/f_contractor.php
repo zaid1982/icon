@@ -187,8 +187,10 @@ class Class_contractor {
                 $row_result['userGroupId'] = $contractorUser['user_group_id'];
                 $row_result['userId'] = $contractorUser['user_id'];
                 $row_result['userFullname'] = $contractorUser['user_fullname'];
-                $row_result['userContactNo'] = $contractorUser['user_contact_no'];
-                $row_result['userEmail'] = $contractorUser['user_email'];
+                $row_result['userContactNo'] = $this->fn_general->clear_null($contractorUser['user_contact_no']);
+                $row_result['userEmail'] = $this->fn_general->clear_null($contractorUser['user_email']);
+                $row_result['roles'] = $this->fn_general->clear_null($contractorUser['roles']);
+                $row_result['userStatus'] = $contractorUser['user_status'];
                 array_push($resultUser, $row_result);
             }
             $result['employees'] = $resultUser;

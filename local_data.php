@@ -64,6 +64,9 @@ try {
             case 'icon_contractor':
                 $result = $fn_contractor->get_contractor_list();
                 break;
+            case 'icon_role':
+                $result = $fn_reference->get_role();
+                break;
             default:
                 throw new Exception('(ErrCode:2303) [' . __LINE__ . '] - Parameter name invalid ('.$name.')');
         }
