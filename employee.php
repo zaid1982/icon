@@ -49,6 +49,16 @@ try {
         Class_db::getInstance()->db_commit();
         $form_data['result'] = $result;
         $form_data['success'] = true;
+    }
+    else if ('GET' === $request_method) {
+        $userGroupId = filter_input(INPUT_GET, 'userGroupId');
+
+        if (!is_null($userGroupId)) {
+            $result = $fn_employee->getEmployee($userGroupId);
+        }
+
+        $form_data['result'] = $result;
+        $form_data['success'] = true;
     } else {
         throw new Exception('(ErrCode:3300) [' . __LINE__ . '] - Wrong Request Method');
     }

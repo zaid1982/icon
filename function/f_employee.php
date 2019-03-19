@@ -134,4 +134,46 @@ class Class_employee {
             throw new Exception($this->get_exception('0801', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    /**
+     * @param $userGroupId
+     * @return array
+     * @throws Exception
+     */
+    public function getEmployee ($userGroupId) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering getEmployee()');
+
+            if (empty($userGroupId)) {
+                throw new Exception('(ErrCode:0804) [' . __LINE__ . '] - Parameter userGroupId empty');
+            }
+
+            $userId = Class_db::getInstance()->db_select_col('sys_user_group', array('user_group_id'=>$userGroupId), 'user_id', null, 1);
+
+            $result = array();
+            $userProfile = Class_db::getInstance()->db_select_single('vw_user_profile', array('sys_user.user_id'=>$userId), null, 1);
+            if (!empty($userProfile)) {
+                $result['userId'] = $userProfile['user_id'];
+                $result['userName'] = $userProfile['user_name'];
+                $result['userFirstName'] = $userProfile['user_first_name'];
+                $result['userLastName'] = $userProfile['user_last_name'];
+                $result['userMykadNo'] = $userProfile['user_mykad_no'];
+                $result['userStatus'] = $userProfile['user_status'];
+                $result['userContactNo'] = $this->fn_general->clear_null($userProfile['user_contact_no']);
+                $result['userEmail'] = $this->fn_general->clear_null($userProfile['user_email']);
+
+                $resultRole = array();
+                $roles = Class_db::getInstance()->db_select('sys_user_role', array('user_id'=>$userId, 'role_id'=>'(5,6)'));
+                foreach ($roles as $role) {
+                    array_push($resultRole, $role['role_id']);
+                }
+                $result['roles'] = $resultRole;
+            }
+
+            return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0801', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }
