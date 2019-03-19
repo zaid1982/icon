@@ -136,6 +136,13 @@ class Class_sql
                     FROM sys_user_role 
                     WHERE role_id IN (5,6)
                     GROUP BY user_id) user_role ON user_role.user_id = sys_user.user_id";
+            } else if ($title === 'vw_user_profile') {
+                $sql = "SELECT 
+                    sys_user.*,
+                    sys_user_profile.user_contact_no,
+                    sys_user_profile.user_email
+                FROM  sys_user 
+                LEFT JOIN sys_user_profile ON sys_user_profile.user_id = sys_user.user_id AND user_profile_status = 1";
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }

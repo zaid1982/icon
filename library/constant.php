@@ -37,6 +37,7 @@ class Class_constant {
     const ERR_WORKORDER_SIMILAR = 'Workorder already created. Please refresh or go back to main page.';
     const ERR_WORKORDER_SUBMITTED = 'Workorder already submitted. Please refresh or go back to main page.';
     const ERR_CONTRACTOR_SITE_SIMILAR = 'Site already exist';
+    const ERR_EMPLOYEE_CHECK_EXIST = 'MyKad No. / Passport No. already exist in the contractor\'s employee list.';
 
     const SUC_FORGOT_PASSWORD = 'Your password successfully reset. Please login with temporary password sent to your email.';
     const SUC_CHANGE_PASSWORD = 'Your password successfully changed';

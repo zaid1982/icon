@@ -11,7 +11,6 @@ require_once 'function/f_general.php';
 /* Error code range - 0800 */
 class Class_contractor {
 
-
     private $fn_general;
 
     function __construct()
@@ -125,7 +124,7 @@ class Class_contractor {
      */
     public function create_draft ($userId) {
         try {
-            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'create_draft get_workorder()');
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering create_draft()');
 
             if (empty($userId)) {
                 throw new Exception('(ErrCode:0802) [' . __LINE__ . '] - Parameter userId empty');
