@@ -211,7 +211,7 @@ class Class_login {
             if (Class_db::getInstance()->db_count('sys_user_role', array('user_id'=>$userId, 'role_id'=>$roleId)) == 0) {
                 throw new Exception('(ErrCode:0114) [' . __LINE__ . '] - '.$constant::ERR_LOGIN_NOT_EXIST, 31);
             }
-            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array('sys_user_role.user_id'=>$userId));
+            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array(), null, null, array('user_id'=>$userId));
 
             $token = $this->create_jwt($userId, $username);
 
@@ -276,7 +276,7 @@ class Class_login {
             $userId = $profile['user_id'];
             $result = array();
 
-            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array('sys_user_role.user_id'=>$userId));
+            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array(), null, null, null, array('user_id'=>$userId));
 
             $token = $this->create_jwt($userId, $username);
 

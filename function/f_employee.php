@@ -92,10 +92,10 @@ class Class_employee {
      * @return array
      * @throws Exception
      */
-    public function checkByIc ($mykadNo, $groupId) {
+    public function check_by_ic ($mykadNo, $groupId) {
         $constant = new Class_constant();
         try {
-            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering checkByIc()');
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering check_by_ic()');
 
             if (empty($mykadNo)) {
                 throw new Exception('(ErrCode:0802) [' . __LINE__ . '] - Parameter mykadNo empty');
@@ -107,7 +107,7 @@ class Class_employee {
             $result = array();
             $userProfile = Class_db::getInstance()->db_select_single('vw_user_profile', array('user_mykad_no'=>$mykadNo));
             if (!empty($userProfile)) {
-                if (Class_db::getInstance()->db_count('sys_user_group', array('group_id'=>$groupId, 'user_id'=>$userProfile['user_id'])) > 0) {
+                if (Class_db::getInstance()->db_count('sys_user_role', array('group_id'=>$groupId, 'user_id'=>$userProfile['user_id'])) > 0) {
                     throw new Exception('(ErrCode:0804) [' . __LINE__ . '] - '.$constant::ERR_EMPLOYEE_CHECK_EXIST, 31);
                 }
 
@@ -119,13 +119,7 @@ class Class_employee {
                 $result['userStatus'] = $userProfile['user_status'];
                 $result['userContactNo'] = $this->fn_general->clear_null($userProfile['user_contact_no']);
                 $result['userEmail'] = $this->fn_general->clear_null($userProfile['user_email']);
-
-                $resultRole = array();
-                $roles = Class_db::getInstance()->db_select('sys_user_role', array('user_id'=>$userProfile['user_id'], 'role_id'=>'(5,6)'));
-                foreach ($roles as $role) {
-                    array_push($resultRole, $role['role_id']);
-                }
-                $result['roles'] = $resultRole;
+                $result['roles'] = array();
             }
 
             return $result;
@@ -136,19 +130,21 @@ class Class_employee {
     }
 
     /**
-     * @param $userGroupId
+     * @param $groupId
+     * @param $userId
      * @return array
      * @throws Exception
      */
-    public function getEmployee ($userGroupId) {
+    public function get_employee ($groupId, $userId) {
         try {
-            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering getEmployee()');
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_employee()');
 
-            if (empty($userGroupId)) {
-                throw new Exception('(ErrCode:0804) [' . __LINE__ . '] - Parameter userGroupId empty');
+            if (empty($groupId)) {
+                throw new Exception('(ErrCode:0803) [' . __LINE__ . '] - Parameter groupId empty');
             }
-
-            $userId = Class_db::getInstance()->db_select_col('sys_user_group', array('user_group_id'=>$userGroupId), 'user_id', null, 1);
+            if (empty($userId)) {
+                throw new Exception('(ErrCode:0807) [' . __LINE__ . '] - Parameter userId empty');
+            }
 
             $result = array();
             $userProfile = Class_db::getInstance()->db_select_single('vw_user_profile', array('sys_user.user_id'=>$userId), null, 1);
@@ -163,7 +159,7 @@ class Class_employee {
                 $result['userEmail'] = $this->fn_general->clear_null($userProfile['user_email']);
 
                 $resultRole = array();
-                $roles = Class_db::getInstance()->db_select('sys_user_role', array('user_id'=>$userId, 'role_id'=>'(5,6)'));
+                $roles = Class_db::getInstance()->db_select('sys_user_role', array('user_id'=>$userId, 'group_id'=>$groupId, 'role_id'=>'(5,6)'));
                 foreach ($roles as $role) {
                     array_push($resultRole, $role['role_id']);
                 }
@@ -171,6 +167,56 @@ class Class_employee {
             }
 
             return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0801', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $groupId
+     * @param $employeeId
+     * @param $rolesStr
+     * @param $userId
+     * @throws Exception
+     */
+    public function add_employee_existing ($groupId, $employeeId, $rolesStr, $userId) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering add_employee_existing()');
+
+            if (empty($groupId)) {
+                throw new Exception('(ErrCode:0803) [' . __LINE__ . '] - Parameter groupId empty');
+            }
+            if (empty($employeeId)) {
+                throw new Exception('(ErrCode:0805) [' . __LINE__ . '] - Parameter employeeId empty');
+            }
+            if (empty($rolesStr)) {
+                throw new Exception('(ErrCode:0806) [' . __LINE__ . '] - Parameter rolesStr empty');
+            }
+            if (empty($userId)) {
+                throw new Exception('(ErrCode:0807) [' . __LINE__ . '] - Parameter userId empty');
+            }
+
+            $roles = explode(',', $rolesStr);
+            $dbRoles = Class_db::getInstance()->db_select_colm('sys_user_role', array('user_id'=>$employeeId, 'group_id'=>$groupId, 'role_id'=>'(5,6)'), 'role_id');
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'roles = '.print_r($roles, true));
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'dbRoles = '.print_r($dbRoles, true));
+            foreach ($dbRoles as $dbRole) {
+                $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'dbRole = '.$dbRole);
+                $key = array_search($dbRole, $roles);
+                $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'key = '.$key);
+
+                if ($key !== false) {
+                    $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'key = '.$key);
+                    array_splice($roles, $key, 1);
+                } else {
+                    // if empty at task_assign (transaction active) and not left alone at sys_user_role (not draft) then delete sys_user_role, wfl_checkpoint_user
+                }
+            }
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'roles = '.print_r($roles, true));
+            // add remaining roles - sys_user_role, checkpoint_user
+
+
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0801', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());

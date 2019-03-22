@@ -37,12 +37,11 @@ class Class_sql
                 LEFT JOIN ref_state ON ref_state.state_id = sys_address.state_id";
             } else if ($title == 'vw_roles') {
                 $sql = "SELECT
-                    sys_user_role.user_id AS user_id,
                     ref_role.role_id AS roleId, 
                     ref_role.role_desc AS roleDesc, 
                     ref_role.role_type AS roleType
-                FROM sys_user_role
-                INNER JOIN ref_role ON sys_user_role.role_id = ref_role.role_id AND role_status = 1";
+                FROM (SELECT DISTINCT(role_id) FROM sys_user_role WHERE user_id = [user_id] GROUP BY role_id) roles
+                INNER JOIN ref_role ON roles.role_id = ref_role.role_id AND role_status = 1";
             } else if ($title === 'vw_menu') {
                 $sql = "SELECT 
                     sys_nav.nav_id,
@@ -122,20 +121,17 @@ class Class_sql
                     GROUP BY contractor_id) contractor_site ON contractor_site.contractor_id = icn_contractor.contractor_id";
             } else if ($title === 'vw_contractor_user') {
                 $sql = "SELECT
-                    sys_user_group.*,
+                    user_role.*,
                     CONCAT(sys_user.user_first_name, ' ', sys_user.user_last_name) AS user_fullname,
                     sys_user_profile.user_contact_no,
                     sys_user_profile.user_email,
-	                user_role.roles,
                     sys_user.user_status
-                FROM sys_user_group
-                LEFT JOIN sys_user ON sys_user.user_id = sys_user_group.user_id
-                LEFT JOIN sys_user_profile ON sys_user_profile.user_id = sys_user_group.user_id AND user_profile_status = 1
-                LEFT JOIN 
-                    (SELECT user_id, GROUP_CONCAT(role_id) AS roles 
+                FROM (SELECT user_id, group_id, GROUP_CONCAT(role_id) AS roles 
                     FROM sys_user_role 
-                    WHERE role_id IN (5,6)
-                    GROUP BY user_id) user_role ON user_role.user_id = sys_user.user_id";
+                    WHERE role_id IN (5,6) AND group_id = [group_id]
+                    GROUP BY user_id, group_id) user_role
+                LEFT JOIN sys_user ON sys_user.user_id = user_role.user_id
+                LEFT JOIN sys_user_profile ON sys_user_profile.user_id = user_role.user_id AND user_profile_status = 1";
             } else if ($title === 'vw_user_profile') {
                 $sql = "SELECT 
                     sys_user.*,

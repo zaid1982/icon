@@ -60,7 +60,6 @@ try {
                 'uploadBlobType'=>$uploadBlobType,
                 'uploadBlobData'=>$uploadBlobData
             );
-
             $result = $fn_ticket->upload_ticket_image($imageDetails, $jwt_data->userId);
             $fn_general->save_audit('8', $jwt_data->userId, 'upload_id = ' . $result['uploadId']);
         } else {

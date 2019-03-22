@@ -102,7 +102,7 @@ class Class_task {
             if (!empty($checkpointGroup) && $groupId !== '' && $checkpointGroup != $groupId) {
                 throw new Exception('(ErrCode:0408) [' . __LINE__ . '] - Group ID ('.$groupId.') is not allowed to perform this checkpoint ('.$checkpointId.')');
             }
-            if (Class_db::getInstance()->db_count('wfl_checkpoint_user', array('checkpoint_id'=>$checkpointId, 'user_id'=>$userId)) == 0) {
+            if (Class_db::getInstance()->db_count('wfl_checkpoint_user', array('checkpoint_id'=>$checkpointId, 'user_id'=>$userId, 'group_id'=>$groupId)) == 0) {
                 throw new Exception('(ErrCode:0409) [' . __LINE__ . '] - User ID ('.$userId.') is not allowed to perform this checkpoint ('.$checkpointId.')');
             }
         } catch (Exception $ex) {
@@ -245,6 +245,7 @@ class Class_task {
             $checkpointType = $checkpoint['checkpoint_type'];
             $checkpointClaimType = $checkpoint['checkpoint_claim_type'];
             $checkFlowId = $checkpoint['flow_id'];
+            $this->check_next_task($checkpoint, $userId, $roleId, $groupId);
 
             $arrUpdTask = array('task_current'=>'2', 'role_id'=>$roleId, 'group_id'=>$groupId, 'task_remark'=>$remark, 'task_time_submit'=>'Now()', 'task_status'=>$status);
             if ($checkpointClaimType == '2') {

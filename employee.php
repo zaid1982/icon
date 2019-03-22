@@ -41,7 +41,14 @@ try {
         if ($action === 'get_by_mykad') {
             $groupId = filter_input(INPUT_POST, 'groupId');
             $mykadNo = filter_input(INPUT_POST, 'userMykadNo');
-            $result = $fn_employee->checkByIc($mykadNo, $groupId);
+            $result = $fn_employee->check_by_ic($mykadNo, $groupId);
+        }
+        else if ($action === 'add_employee_existing') {
+            $groupId = filter_input(INPUT_POST, 'groupId');
+            $userId = filter_input(INPUT_POST, 'userId');
+            $roles = filter_input(INPUT_POST, 'roles');
+            $userGroupId = $fn_employee->add_employee_existing($groupId, $userId, $roles, $jwt_data->userId);
+            //$fn_general->save_audit('40', $jwt_data->userId, 'user_group_id = ' . $userGroupId);
         } else {
             throw new Exception('(ErrCode:3302) [' . __LINE__ . '] - Parameter action ('.$action.') invalid');
         }
@@ -51,10 +58,11 @@ try {
         $form_data['success'] = true;
     }
     else if ('GET' === $request_method) {
-        $userGroupId = filter_input(INPUT_GET, 'userGroupId');
+        $groupId = filter_input(INPUT_GET, 'groupId');
+        $userId = filter_input(INPUT_GET, 'userId');
 
-        if (!is_null($userGroupId)) {
-            $result = $fn_employee->getEmployee($userGroupId);
+        if (!is_null($groupId) && !is_null($userId)) {
+            $result = $fn_employee->get_employee($groupId, $userId);
         }
 
         $form_data['result'] = $result;

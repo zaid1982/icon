@@ -180,10 +180,9 @@ class Class_contractor {
             $result['sites'] = $resultSites;
 
             $resultUser = array();
-            $contractorUsers = Class_db::getInstance()->db_select('vw_contractor_user', array('group_id'=>$contractor['group_id']));
+            $contractorUsers = Class_db::getInstance()->db_select('vw_contractor_user', array(), null, null, null, array('group_id'=>$contractor['group_id']));
             foreach ($contractorUsers as $contractorUser) {
                 $row_result = array();
-                $row_result['userGroupId'] = $contractorUser['user_group_id'];
                 $row_result['userId'] = $contractorUser['user_id'];
                 $row_result['userFullname'] = $contractorUser['user_fullname'];
                 $row_result['userContactNo'] = $this->fn_general->clear_null($contractorUser['user_contact_no']);
