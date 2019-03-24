@@ -103,13 +103,14 @@ class Class_workorder {
             $problemtypeId = $ticket['problemtype_id'];
             $workcategoryId = $ticket['workcategory_id'];
             $timeComplaint = $ticket['ticket_time_submit'];
+            $worktypeId = Class_db::getInstance()->db_select_col('icn_workcategory', array('workcategory_id'=>$workcategoryId), 'worktype_id', null, 1);
 
             if (Class_db::getInstance()->db_count('icn_workorder', array('ticket_id'=>$ticketId)) > 0) {
                 throw new Exception('(ErrCode:0704) [' . __LINE__ . '] - '.$constant::ERR_WORKORDER_SIMILAR, 31);
             }
 
             $workorderId = Class_db::getInstance()->db_insert('icn_workorder', array('ticket_id'=>$ticketId, 'problemtype_id'=>$problemtypeId, 'workcategory_id'=>$workcategoryId, 'workorder_time_complaint'=>$timeComplaint,
-                'workorder_created_by'=>$userId, 'workorder_status'=>'5'));
+                'worktype_id'=>$worktypeId, 'workorder_created_by'=>$userId, 'workorder_status'=>'5'));
             Class_db::getInstance()->db_update('icn_workorder', array('workorder_no'=>'draft-'.$workorderId), array('workorder_id'=>$workorderId));
 
             return $workorderId;
@@ -136,7 +137,7 @@ class Class_workorder {
             $result['workorderId'] = $workorder['workorder_id'];
             $result['workorderNo'] = $this->fn_general->clear_null($workorder['workorder_no']);
             $result['problemtypeId'] = $workorder['problemtype_id'];
-            $result['worktypeId'] = $workorder['worktype_id'];
+            $result['worktypeId'] = $this->fn_general->clear_null($workorder['worktype_id']);
             $result['workcategoryId'] = $workorder['workcategory_id'];
             $result['siteId'] = $this->fn_general->clear_null($workorder['site_id']);
             $result['areaId'] = $this->fn_general->clear_null($workorder['area_id']);

@@ -321,4 +321,24 @@ class Class_task {
             throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    public function add_user_role ($roleId, $groupId, $userId) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering add_user_role()');
+
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    public function delete_user_role ($roleId, $groupId, $userId) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering delete_user_role()');
+
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }

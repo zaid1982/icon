@@ -7,15 +7,18 @@
  */
 require_once 'library/constant.php';
 require_once 'function/f_general.php';
+require_once 'function/f_task.php';
 
 /* Error code range - 0900 */
 class Class_employee {
 
     private $fn_general;
+    private $fn_task;
 
     function __construct()
     {
         $this->fn_general = new Class_general();
+        $this->fn_task = new Class_task();
     }
 
     private function get_exception($codes, $function, $line, $msg)
@@ -210,6 +213,7 @@ class Class_employee {
                     $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'key = '.$key);
                     array_splice($roles, $key, 1);
                 } else {
+
                     // if empty at task_assign (transaction active) and not left alone at sys_user_role (not draft) then delete sys_user_role, wfl_checkpoint_user
                 }
             }
