@@ -47,8 +47,8 @@ try {
             $groupId = filter_input(INPUT_POST, 'groupId');
             $userId = filter_input(INPUT_POST, 'userId');
             $roles = filter_input(INPUT_POST, 'roles');
-            $userGroupId = $fn_employee->add_employee_existing($groupId, $userId, $roles, $jwt_data->userId);
-            //$fn_general->save_audit('40', $jwt_data->userId, 'user_group_id = ' . $userGroupId);
+            $fn_employee->add_employee_existing($groupId, $userId, $roles, $jwt_data->userId);
+            $fn_general->save_audit('40', $jwt_data->userId, 'user_id = ' . $userId);
         } else {
             throw new Exception('(ErrCode:3302) [' . __LINE__ . '] - Parameter action ('.$action.') invalid');
         }

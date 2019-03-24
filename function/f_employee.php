@@ -202,25 +202,22 @@ class Class_employee {
 
             $roles = explode(',', $rolesStr);
             $dbRoles = Class_db::getInstance()->db_select_colm('sys_user_role', array('user_id'=>$employeeId, 'group_id'=>$groupId, 'role_id'=>'(5,6)'), 'role_id');
-            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'roles = '.print_r($roles, true));
-            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'dbRoles = '.print_r($dbRoles, true));
             foreach ($dbRoles as $dbRole) {
-                $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'dbRole = '.$dbRole);
                 $key = array_search($dbRole, $roles);
-                $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'key = '.$key);
-
                 if ($key !== false) {
-                    $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'key = '.$key);
                     array_splice($roles, $key, 1);
                 } else {
-                    $this->fn_task->delete_user_role($employeeId, $groupId, $dbRole);
-                    // if empty at task_assign (transaction active) and not left alone at sys_user_role (not draft) then delete sys_user_role, wfl_checkpoint_user
+                    $this->fn_task->delete_user_role($employeeId, $dbRole, $groupId);
                 }
             }
+
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'roles = '.print_r($roles, true));
-            // add remaining roles - sys_user_role, checkpoint_user
-
-
+            if (sizeof($roles) > 0 && Class_db::getInstance()->db_count('sys_user_group', array('user_id'=>$employeeId, 'group_id'=>$groupId)) == 0) {
+                Class_db::getInstance()->db_insert('sys_user_group', array('user_id'=>$employeeId, 'group_id'=>$groupId));
+            }
+            foreach ($roles as $role) {
+                $this->fn_task->add_user_role($employeeId, $role, $groupId);
+            }
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0801', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());

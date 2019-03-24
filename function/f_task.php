@@ -107,7 +107,7 @@ class Class_task {
             }
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+            throw new Exception($this->get_exception('0401', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
 
@@ -128,8 +128,11 @@ class Class_task {
             foreach ($checkpointAssigns as $checkpointAssign) {
                 $assignType = $checkpointAssign['checkpoint_assign_type'];
                 $checkpointTo = $checkpointAssign['checkpoint_to'];
+                $checkpointData = Class_db::getInstance()->db_select_single('wfl_checkpoint', array('checkpoint_id'=>$checkpointTo), null, 1);
+                $roleId = $checkpointData['role_id'];
+                $groupId = $checkpointData['group_id'];
                 if ($assignType == '1') {   // Assign to himself
-                    Class_db::getInstance()->db_insert('wfl_task_assign', array('transaction_id'=>$transactionId, 'checkpoint_id'=>$checkpointTo));
+                    Class_db::getInstance()->db_insert('wfl_task_assign', array('transaction_id'=>$transactionId, 'checkpoint_id'=>$checkpointTo, 'role_id'=>$roleId, 'group_id'=>$groupId));
                 }
                 else if ($assignType == '2') {    // Assign to User
                     if (empty($assignedGroup)) {
@@ -138,18 +141,18 @@ class Class_task {
                     if (empty($assignedUser)) {
                         throw new Exception('(ErrCode:0412) [' . __LINE__ . '] - Parameter assignedUser empty');
                     }
-                    Class_db::getInstance()->db_insert('wfl_task_assign', array('transaction_id'=>$transactionId, 'checkpoint_id'=>$checkpointTo, 'group_id'=>$assignedGroup, 'user_id'=>$assignedUser));
+                    Class_db::getInstance()->db_insert('wfl_task_assign', array('transaction_id'=>$transactionId, 'checkpoint_id'=>$checkpointTo, 'role_id'=>$roleId, 'group_id'=>$assignedGroup, 'user_id'=>$assignedUser));
                 }
                 else if ($assignType == '3') {    // Assign to Group
                     if (empty($assignedGroup)) {
                         throw new Exception('(ErrCode:0411) [' . __LINE__ . '] - Parameter assignedGroup empty');
                     }
-                    Class_db::getInstance()->db_insert('wfl_task_assign', array('transaction_id'=>$transactionId, 'checkpoint_id'=>$checkpointTo, 'group_id'=>$assignedGroup));
+                    Class_db::getInstance()->db_insert('wfl_task_assign', array('transaction_id'=>$transactionId, 'checkpoint_id'=>$checkpointTo, 'role_id'=>$roleId, 'group_id'=>$assignedGroup));
                 }
             }
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+            throw new Exception($this->get_exception('0401', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
 
@@ -199,7 +202,7 @@ class Class_task {
             return $taskId;
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+            throw new Exception($this->get_exception('0401', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
 
@@ -318,27 +321,66 @@ class Class_task {
             return $newTaskId;
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+            throw new Exception($this->get_exception('0401', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
 
-    public function add_user_role ($roleId, $groupId, $userId) {
-        try {
-            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering add_user_role()');
-
-        } catch (Exception $ex) {
-            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
-        }
-    }
-
-    public function delete_user_role ($roleId, $groupId, $userId) {
+    public function delete_user_role ($userId, $roleId, $groupId) {
+        $constant = new Class_constant();
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering delete_user_role()');
 
+            if (empty($userId)) {
+                throw new Exception('(ErrCode:0403) [' . __LINE__ . '] - Parameter userId empty');
+            }
+            if (empty($roleId)) {
+                throw new Exception('(ErrCode:0404) [' . __LINE__ . '] - Parameter roleId empty');
+            }
+            if (empty($groupId)) {
+                throw new Exception('(ErrCode:0405) [' . __LINE__ . '] - Parameter groupId empty');
+            }
+
+            if (Class_db::getInstance()->db_count('sys_user_role', array('role_id'=>$roleId, 'group_id'=>$groupId, 'user_id'=>'<>'.$userId)) == 0) {
+                throw new Exception('(ErrCode:0419) [' . __LINE__ . '] - '.$constant::ERR_ROLE_DELETE_ALONE, 31);
+            }
+            if (Class_db::getInstance()->db_count('vw_check_assigned', array('role_id'=>$roleId, 'group_id'=>$groupId, 'user_id'=>$userId)) > 0) {
+                throw new Exception('(ErrCode:0420) [' . __LINE__ . '] - '.$constant::ERR_ROLE_DELETE_HAVE_TASK, 31);
+            }
+
+            Class_db::getInstance()->db_select_delete('sys_user_role', array('group_id'=>$groupId, 'user_id'=>$userId, 'role_id'=>$roleId));
+            Class_db::getInstance()->db_select_delete('wfl_checkpoint_user', array('group_id'=>$groupId, 'user_id'=>$userId, 'role_id'=>$roleId));
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
-            throw new Exception($this->get_exception('0501', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+            throw new Exception($this->get_exception('0401', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    public function add_user_role ($userId, $roleId, $groupId) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering add_user_role()');
+
+            if (empty($userId)) {
+                throw new Exception('(ErrCode:0403) [' . __LINE__ . '] - Parameter userId empty');
+            }
+            if (empty($roleId)) {
+                throw new Exception('(ErrCode:0404) [' . __LINE__ . '] - Parameter roleId empty');
+            }
+            if (empty($groupId)) {
+                throw new Exception('(ErrCode:0405) [' . __LINE__ . '] - Parameter groupId empty');
+            }
+
+            if (Class_db::getInstance()->db_count('sys_user_group', array('user_id'=>$userId, 'group_id'=>$groupId)) == 0) {
+                throw new Exception('(ErrCode:0421) [' . __LINE__ . '] - User not exist in group', 31);
+            }
+
+            Class_db::getInstance()->db_insert('sys_user_role', array('group_id'=>$groupId, 'user_id'=>$userId, 'role_id'=>$roleId));
+            $checkpointIds = Class_db::getInstance()->db_select_colm('wfl_checkpoint', array('role_id'=>$roleId, 'w1'=>('(group_id = '.$groupId.' OR group_id IS NULL)')), 'checkpoint_id');
+            foreach ($checkpointIds as $checkpointId) {
+                Class_db::getInstance()->db_insert('wfl_checkpoint_user', array('checkpoint_id'=>$checkpointId, 'group_id'=>$groupId, 'user_id'=>$userId, 'role_id'=>$roleId));
+            }
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0401', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
 }

@@ -137,8 +137,13 @@ class Class_sql
                     sys_user.*,
                     sys_user_profile.user_contact_no,
                     sys_user_profile.user_email
-                FROM  sys_user 
+                FROM sys_user 
                 LEFT JOIN sys_user_profile ON sys_user_profile.user_id = sys_user.user_id AND user_profile_status = 1";
+            } else if ($title === 'vw_check_assigned') {
+                $sql = "SELECT 
+                    wfl_task_assign.* 
+                FROM wfl_task_assign  
+                INNER JOIN wf_transaction ON wf_transaction.transaction_id = wfl_task_assign.transaction_id AND trnsaction_status = 4";
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }
