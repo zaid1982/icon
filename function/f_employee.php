@@ -213,7 +213,7 @@ class Class_employee {
                     $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'key = '.$key);
                     array_splice($roles, $key, 1);
                 } else {
-
+                    $this->fn_task->delete_user_role($employeeId, $groupId, $dbRole);
                     // if empty at task_assign (transaction active) and not left alone at sys_user_role (not draft) then delete sys_user_role, wfl_checkpoint_user
                 }
             }
