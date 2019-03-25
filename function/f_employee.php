@@ -183,40 +183,60 @@ class Class_employee {
      * @param $userId
      * @throws Exception
      */
-    public function add_employee_existing ($groupId, $employeeId, $rolesStr, $userId) {
+    public function add_employee_existing ($groupId, $userId, $rolesStr) {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering add_employee_existing()');
 
             if (empty($groupId)) {
                 throw new Exception('(ErrCode:0803) [' . __LINE__ . '] - Parameter groupId empty');
             }
-            if (empty($employeeId)) {
-                throw new Exception('(ErrCode:0805) [' . __LINE__ . '] - Parameter employeeId empty');
+            if (empty($userId)) {
+                throw new Exception('(ErrCode:0807) [' . __LINE__ . '] - Parameter userId empty');
             }
             if (empty($rolesStr)) {
                 throw new Exception('(ErrCode:0806) [' . __LINE__ . '] - Parameter rolesStr empty');
             }
-            if (empty($userId)) {
-                throw new Exception('(ErrCode:0807) [' . __LINE__ . '] - Parameter userId empty');
-            }
 
             $roles = explode(',', $rolesStr);
-            $dbRoles = Class_db::getInstance()->db_select_colm('sys_user_role', array('user_id'=>$employeeId, 'group_id'=>$groupId, 'role_id'=>'(5,6)'), 'role_id');
+            $dbRoles = Class_db::getInstance()->db_select_colm('sys_user_role', array('user_id'=>$userId, 'group_id'=>$groupId, 'role_id'=>'(5,6)'), 'role_id');
             foreach ($dbRoles as $dbRole) {
                 $key = array_search($dbRole, $roles);
                 if ($key !== false) {
                     array_splice($roles, $key, 1);
                 } else {
-                    $this->fn_task->delete_user_role($employeeId, $dbRole, $groupId);
+                    $this->fn_task->delete_user_role($userId, $dbRole, $groupId);
                 }
             }
 
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'roles = '.print_r($roles, true));
-            if (sizeof($roles) > 0 && Class_db::getInstance()->db_count('sys_user_group', array('user_id'=>$employeeId, 'group_id'=>$groupId)) == 0) {
-                Class_db::getInstance()->db_insert('sys_user_group', array('user_id'=>$employeeId, 'group_id'=>$groupId));
+            if (sizeof($roles) > 0 && Class_db::getInstance()->db_count('sys_user_group', array('user_id'=>$userId, 'group_id'=>$groupId)) == 0) {
+                Class_db::getInstance()->db_insert('sys_user_group', array('user_id'=>$userId, 'group_id'=>$groupId));
             }
             foreach ($roles as $role) {
-                $this->fn_task->add_user_role($employeeId, $role, $groupId);
+                $this->fn_task->add_user_role($userId, $role, $groupId);
+            }
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0801', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    public function add_employee_new ($groupId, $userId, $rolesStr) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering add_employee_existing()');
+
+            if (empty($groupId)) {
+                throw new Exception('(ErrCode:0803) [' . __LINE__ . '] - Parameter groupId empty');
+            }
+            if (empty($rolesStr)) {
+                throw new Exception('(ErrCode:0806) [' . __LINE__ . '] - Parameter rolesStr empty');
+            }
+
+            Class_db::getInstance()->db_insert('sys_user_group', array('user_id'=>$userId, 'group_id'=>$groupId));
+            $this->fn_task->add_user_role($userId, '3', '3');
+            $roles = explode(',', $rolesStr);
+            foreach ($roles as $role) {
+                $this->fn_task->add_user_role($userId, $role, $groupId);
             }
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());

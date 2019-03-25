@@ -9,11 +9,13 @@ require_once 'library/constant.php';
 require_once 'function/db.php';
 require_once 'function/f_general.php';
 require_once 'function/f_login.php';
+require_once 'function/f_user.php';
 require_once 'function/f_employee.php';
 
 $constant = new Class_constant();
 $fn_general = new Class_general();
 $fn_login = new Class_login();
+$fn_user = new Class_user();
 $fn_employee = new Class_employee();
 $api_name = 'api_employee';
 $is_transaction = false;
@@ -47,8 +49,35 @@ try {
             $groupId = filter_input(INPUT_POST, 'groupId');
             $userId = filter_input(INPUT_POST, 'userId');
             $roles = filter_input(INPUT_POST, 'roles');
-            $fn_employee->add_employee_existing($groupId, $userId, $roles, $jwt_data->userId);
+            $fn_employee->add_employee_existing($groupId, $userId, $roles);
             $fn_general->save_audit('40', $jwt_data->userId, 'user_id = ' . $userId);
+            $form_data['errmsg'] = $constant::SUC_EMPLOYEE_ADD_EXISTING;
+        }
+        else if ($action === 'add_employee_new') {
+            $groupId = filter_input(INPUT_POST, 'groupId');
+            $roles = filter_input(INPUT_POST, 'roles');
+            $userName = filter_input(INPUT_POST, 'userName');
+            $userMykadNo = filter_input(INPUT_POST, 'userMykadNo');
+            $userPassword = filter_input(INPUT_POST, 'userPassword');
+            $userFirstName = filter_input(INPUT_POST, 'userFirstName');
+            $userLastName = filter_input(INPUT_POST, 'userLastName');
+            $userContactNo = filter_input(INPUT_POST, 'userContactNo');
+            $userEmail = filter_input(INPUT_POST, 'userEmail');
+
+            $param = array(
+                'userName'=>$userName,
+                'userMykadNo'=>$userMykadNo,
+                'userPassword'=>$userPassword,
+                'userFirstName'=>$userFirstName,
+                'userLastName'=>$userLastName,
+                'userContactNo'=>$userContactNo,
+                'userEmail'=>$userEmail,
+                'userType'=>'1'
+            );
+            $userId = $fn_user->add_user($param);
+            $fn_employee->add_employee_new($groupId, $userId, $roles);
+            $fn_general->save_audit('41', $jwt_data->userId, 'user_id = ' . $userId);
+            $form_data['errmsg'] = $constant::SUC_EMPLOYEE_ADD_NEW;
         } else {
             throw new Exception('(ErrCode:3302) [' . __LINE__ . '] - Parameter action ('.$action.') invalid');
         }

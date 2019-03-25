@@ -40,6 +40,8 @@ class Class_constant {
     const ERR_EMPLOYEE_CHECK_EXIST = 'MyKad No. / Passport No. already exist in the contractor\'s employee list.';
     const ERR_ROLE_DELETE_HAVE_TASK = 'This user cannot be removed from this roles since there are still task assigned. Please delegate the task first.';
     const ERR_ROLE_DELETE_ALONE = 'There is no other user are assigned to this role. Please assign this role to new user before remove this user form this role.';
+    const ERR_USER_ADD_SIMILAR_MYKAD = 'MyKad No. / Passport No. already exist. Please use different no.';
+    const ERR_USER_ADD_SIMILAR_USERNAME = 'User ID already exist. Please use different user ID.';
 
     const SUC_FORGOT_PASSWORD = 'Your password successfully reset. Please login with temporary password sent to your email.';
     const SUC_CHANGE_PASSWORD = 'Your password successfully changed';
@@ -70,5 +72,7 @@ class Class_constant {
     const SUC_CONTRACTOR_SAVE = 'Contractor successfully updated';
     const SUC_CONTRACTOR_SITE_ADD = 'Site successfully added';
     const SUC_CONTRACTOR_SITE_DELETE = 'Site successfully deleted';
+    const SUC_EMPLOYEE_ADD_EXISTING = 'User successfully added as contractor\'s employee';
+    const SUC_EMPLOYEE_ADD_NEW = 'New contractor\'s employee successfully created';
 
 }

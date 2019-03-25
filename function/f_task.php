@@ -325,6 +325,12 @@ class Class_task {
         }
     }
 
+    /**
+     * @param $userId
+     * @param $roleId
+     * @param $groupId
+     * @throws Exception
+     */
     public function delete_user_role ($userId, $roleId, $groupId) {
         $constant = new Class_constant();
         try {
@@ -355,6 +361,12 @@ class Class_task {
         }
     }
 
+    /**
+     * @param $userId
+     * @param $roleId
+     * @param $groupId
+     * @throws Exception
+     */
     public function add_user_role ($userId, $roleId, $groupId) {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering add_user_role()');

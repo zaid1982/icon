@@ -26,7 +26,12 @@ class Class_user {
             return "(ErrCode:".$codes.") [".__CLASS__.":".$function.":".$line."]";
         }
     }
-    
+
+    /**
+     * @param $property
+     * @return mixed
+     * @throws Exception
+     */
     public function __get($property) {
         if (property_exists($this, $property)) {
             return $this->$property;
@@ -35,30 +40,50 @@ class Class_user {
         }
     }
 
-    public function __set( $property, $value ) {
+    /**
+     * @param $property
+     * @param $value
+     * @throws Exception
+     */
+    public function __set($property, $value ) {
         if (property_exists($this, $property)) {
             $this->$property = $value;        
         } else {
             throw new Exception($this->get_exception('0002', __FUNCTION__, __LINE__, 'Get Property not exist ['.$property.']'));
         }
     }
-    
-    public function __isset( $property ) {
+
+    /**
+     * @param $property
+     * @return bool
+     * @throws Exception
+     */
+    public function __isset($property ) {
         if (property_exists($this, $property)) {
             return isset($this->$property);
         } else {
             throw new Exception($this->get_exception('0003', __FUNCTION__, __LINE__, 'Get Property not exist ['.$property.']'));
         }
     }
-    
-    public function __unset( $property ) {
+
+    /**
+     * @param $property
+     * @throws Exception
+     */
+    public function __unset($property ) {
         if (property_exists($this, $property)) {
             unset($this->$property);
         } else {
             throw new Exception($this->get_exception('0004', __FUNCTION__, __LINE__, 'Get Property not exist ['.$property.']'));
         } 
     }
-               
+
+    /**
+     * @param array $userDetails
+     * @param int $type
+     * @return array
+     * @throws Exception
+     */
     public function register_user ($userDetails=array(), $type=0) {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering register_user()');
@@ -124,7 +149,12 @@ class Class_user {
             throw new Exception($this->get_exception('0201', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
+
+    /**
+     * @param string $activationInput
+     * @return bool|string
+     * @throws Exception
+     */
     public function activate_user ($activationInput='') {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering activate_user()');
@@ -152,7 +182,12 @@ class Class_user {
             throw new Exception($this->get_exception('0201', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
+
+    /**
+     * @param string $userName
+     * @return mixed
+     * @throws Exception
+     */
     public function forgot_password ($userName='') {
         $constant = new Class_constant();
         try {
@@ -180,7 +215,12 @@ class Class_user {
             throw new Exception($this->get_exception('0201', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
+
+    /**
+     * @param $userId
+     * @param $put_vars
+     * @throws Exception
+     */
     public function update_profile ($userId, $put_vars) {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering update_profile()');
@@ -222,7 +262,12 @@ class Class_user {
             throw new Exception($this->get_exception('0201', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
-    
+
+    /**
+     * @param $userId
+     * @param $put_vars
+     * @throws Exception
+     */
     public function change_password ($userId, $put_vars) {
         $constant = new Class_constant();
         try {
@@ -248,6 +293,71 @@ class Class_user {
             Class_db::getInstance()->db_update('sys_user', array('user_password'=>md5($newPassword)), array('user_id'=>$userId));
         }
         catch(Exception $ex) {   
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0201', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param array $userDetails
+     * @return mixed
+     * @throws Exception
+     */
+    public function add_user ($userDetails=array()) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering register_user()');
+            if (empty($userDetails)) {
+                throw new Exception('(ErrCode:0202) [' . __LINE__ . '] - Array userDetails empty');
+            }
+            if (!array_key_exists('userName', $userDetails) && empty($userDetails['userName'])) {
+                throw new Exception('(ErrCode:0228) [' . __LINE__ . '] - Parameter userName empty');
+            }
+            if (!array_key_exists('userFirstName', $userDetails) && empty($userDetails['userFirstName'])) {
+                throw new Exception('(ErrCode:0204) [' . __LINE__ . '] - Parameter userFirstName empty');
+            }
+            if (!array_key_exists('userLastName', $userDetails) && empty($userDetails['userFirstName'])) {
+                throw new Exception('(ErrCode:0205) [' . __LINE__ . '] - Parameter userLastName empty');
+            }
+            if (!array_key_exists('userEmail', $userDetails) && empty($userDetails['userEmail'])) {
+                throw new Exception('(ErrCode:0206) [' . __LINE__ . '] - Parameter userEmail empty');
+            }
+            if (!array_key_exists('userMykadNo', $userDetails) && empty($userDetails['userMykadNo'])) {
+                throw new Exception('(ErrCode:0207) [' . __LINE__ . '] - Parameter userMykadNo empty');
+            }
+            if (!array_key_exists('userContactNo', $userDetails) && empty($userDetails['userContactNo'])) {
+                throw new Exception('(ErrCode:0208) [' . __LINE__ . '] - Parameter userProfileContactNo empty');
+            }
+            if (!array_key_exists('userPassword', $userDetails) && empty($userDetails['userPassword'])) {
+                throw new Exception('(ErrCode:0209) [' . __LINE__ . '] - Parameter userPassword empty');
+            }
+            if (!array_key_exists('userType', $userDetails) && empty($userDetails['userType'])) {
+                throw new Exception('(ErrCode:0229) [' . __LINE__ . '] - Parameter userType empty');
+            }
+
+            $userName = $userDetails['userName'];
+            $userFirstName = $userDetails['userFirstName'];
+            $userLastName = $userDetails['userLastName'];
+            $userEmail = $userDetails['userEmail'];
+            $userMykadNo = $userDetails['userMykadNo'];
+            $userContactNo = $userDetails['userContactNo'];
+            $userPassword = $userDetails['userPassword'];
+            $userType = $userDetails['userType'];
+
+            if (Class_db::getInstance()->db_count('sys_user', array('user_mykad_no'=>$userMykadNo)) > 0) {
+                throw new Exception('(ErrCode:0210) [' . __LINE__ . '] - '.$constant::ERR_USER_ADD_SIMILAR_MYKAD, 31);
+            }
+            if (Class_db::getInstance()->db_count('sys_user', array('user_name'=>$userName)) > 0) {
+                throw new Exception('(ErrCode:0230) [' . __LINE__ . '] - '.$constant::ERR_USER_ADD_SIMILAR_USERNAME, 31);
+            }
+
+            $userId = Class_db::getInstance()->db_insert('sys_user', array('user_name'=>$userName, 'user_type'=>$userType, 'user_password'=>md5($userPassword), 'user_first_name'=>$userFirstName,
+                'user_last_name'=>$userLastName, 'user_mykad_no'=>$userMykadNo, 'user_status'=>'1'));
+            Class_db::getInstance()->db_insert('sys_user_profile', array('user_id'=>$userId, 'user_email'=>$userEmail, 'user_contact_no'=>$userContactNo));
+
+            return $userId;
+        }
+        catch(Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0201', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
