@@ -320,4 +320,37 @@ class Class_contractor {
             throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
     }
+
+    /**
+     * @param $contractorId
+     * @throws Exception
+     */
+    public function submit_contractor ($contractorId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering submit_contractor()');
+
+            if (empty($contractorId)) {
+                throw new Exception('(ErrCode:0803) [' . __LINE__ . '] - Parameter contractorId empty');
+            }
+
+            $contractor = Class_db::getInstance()->db_select_single('icn_contractor', array('contractor_id'=>$contractorId), null, 1);
+            $groupId = $contractor['group_id'];
+            if ($contractor['contractor_status'] != '5') {
+                throw new Exception('(ErrCode:0815) [' . __LINE__ . '] - '.$constant::ERR_CONTRACTOR_SUBMITTED, 31);
+            }
+            if (Class_db::getInstance()->db_count('icn_contractor_site', array('contractor_id'=>$contractorId)) == 0) {
+                throw new Exception('(ErrCode:0816) [' . __LINE__ . '] - '.$constant::ERR_CONTRACTOR_NOSITE, 31);
+            }
+            if (Class_db::getInstance()->db_count('sys_user_role', array('group_id'=>$groupId, 'role_id'=>'5')) == 0) {
+                throw new Exception('(ErrCode:0816) [' . __LINE__ . '] - '.$constant::ERR_CONTRACTOR_NOSUPERVISOR, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_contractor', array('contractor_status'=>'1', 'contractor_time_registered'=>'Now()'), array('contractor_id'=>$contractorId));
+            Class_db::getInstance()->db_update('sys_group', array('group_status'=>'1'), array('group_id'=>$groupId));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
 }

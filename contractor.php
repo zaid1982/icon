@@ -93,9 +93,10 @@ try {
             }
         }
         else if ($action === 'submit_contractor') {
-
+            $fn_contractor->submit_contractor($contractorId);
             $fn_general->updateVersion(9);
-
+            $fn_general->save_audit('44', $jwt_data->userId, 'contractor_id = ' . $contractorId);
+            $form_data['errmsg'] = $constant::SUC_CONTRACTOR_SUBMIT;
         } else {
             throw new Exception('(ErrCode:3103) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
         }

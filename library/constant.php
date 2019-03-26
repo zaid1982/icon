@@ -35,7 +35,10 @@ class Class_constant {
     const ERR_AREA_SIMILAR = 'Area already exist';
     const ERR_CITY_SIMILAR = 'City already exist';
     const ERR_WORKORDER_SIMILAR = 'Workorder already created. Please refresh or go back to main page.';
-    const ERR_WORKORDER_SUBMITTED = 'Workorder already submitted. Please refresh or go back to main page.';
+    const ERR_WORKORDER_SUBMITTED = 'Workorder already submitted. Please go back to main page and refresh the list.';
+    const ERR_CONTRACTOR_SUBMITTED = 'Contractor already submitted. Please go back to main page and refresh the list.';
+    const ERR_CONTRACTOR_NOSITE = 'Please make sure at least 1 site selected';
+    const ERR_CONTRACTOR_NOSUPERVISOR = 'Please register at least 1 employee\'s supervisor';
     const ERR_CONTRACTOR_SITE_SIMILAR = 'Site already exist';
     const ERR_EMPLOYEE_CHECK_EXIST = 'MyKad No. / Passport No. already exist in the contractor\'s employee list.';
     const ERR_EMPLOYEE_DELETE_ALREADY = 'This user already been removed before. Please refresh the employee\'s contractor list';
@@ -73,6 +76,7 @@ class Class_constant {
     const SUC_CONTRACTOR_SAVE = 'Contractor successfully updated';
     const SUC_CONTRACTOR_SITE_ADD = 'Site successfully added';
     const SUC_CONTRACTOR_SITE_DELETE = 'Site successfully deleted';
+    const SUC_CONTRACTOR_SUBMIT = 'Contractor successfully created';
     const SUC_EMPLOYEE_ADD_EXISTING = 'User successfully added as contractor\'s employee';
     const SUC_EMPLOYEE_ADD_NEW = 'New contractor\'s employee successfully created';
     const SUC_EMPLOYEE_EDIT = 'Contractor\'s employee successfully updated';
