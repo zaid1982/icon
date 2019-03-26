@@ -38,6 +38,7 @@ class Class_constant {
     const ERR_WORKORDER_SUBMITTED = 'Workorder already submitted. Please refresh or go back to main page.';
     const ERR_CONTRACTOR_SITE_SIMILAR = 'Site already exist';
     const ERR_EMPLOYEE_CHECK_EXIST = 'MyKad No. / Passport No. already exist in the contractor\'s employee list.';
+    const ERR_EMPLOYEE_DELETE_ALREADY = 'This user already been removed before. Please refresh the employee\'s contractor list';
     const ERR_ROLE_DELETE_HAVE_TASK = 'This user cannot be removed from this roles since there are still task assigned. Please delegate the task first.';
     const ERR_ROLE_DELETE_ALONE = 'There is no other user are assigned to this role. Please assign this role to new user before remove this user form this role.';
     const ERR_USER_ADD_SIMILAR_MYKAD = 'MyKad No. / Passport No. already exist. Please use different no.';
@@ -74,5 +75,7 @@ class Class_constant {
     const SUC_CONTRACTOR_SITE_DELETE = 'Site successfully deleted';
     const SUC_EMPLOYEE_ADD_EXISTING = 'User successfully added as contractor\'s employee';
     const SUC_EMPLOYEE_ADD_NEW = 'New contractor\'s employee successfully created';
+    const SUC_EMPLOYEE_EDIT = 'Contractor\'s employee successfully updated';
+    const SUC_EMPLOYEE_DELETE = 'User successfully deleted from employee list';
 
 }

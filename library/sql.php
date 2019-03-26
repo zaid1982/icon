@@ -143,7 +143,7 @@ class Class_sql
                 $sql = "SELECT 
                     wfl_task_assign.* 
                 FROM wfl_task_assign  
-                INNER JOIN wf_transaction ON wf_transaction.transaction_id = wfl_task_assign.transaction_id AND trnsaction_status = 4";
+                INNER JOIN wfl_transaction ON wfl_transaction.transaction_id = wfl_task_assign.transaction_id AND transaction_status = 4";
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }

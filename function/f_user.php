@@ -351,8 +351,9 @@ class Class_user {
                 throw new Exception('(ErrCode:0230) [' . __LINE__ . '] - '.$constant::ERR_USER_ADD_SIMILAR_USERNAME, 31);
             }
 
+            $addressId = Class_db::getInstance()->db_insert('sys_address', array());
             $userId = Class_db::getInstance()->db_insert('sys_user', array('user_name'=>$userName, 'user_type'=>$userType, 'user_password'=>md5($userPassword), 'user_first_name'=>$userFirstName,
-                'user_last_name'=>$userLastName, 'user_mykad_no'=>$userMykadNo, 'user_status'=>'1'));
+                'user_last_name'=>$userLastName, 'user_mykad_no'=>$userMykadNo, 'address_id'=>$addressId, 'user_time_activate'=>'Now()', 'user_status'=>'1'));
             Class_db::getInstance()->db_insert('sys_user_profile', array('user_id'=>$userId, 'user_email'=>$userEmail, 'user_contact_no'=>$userContactNo));
 
             return $userId;

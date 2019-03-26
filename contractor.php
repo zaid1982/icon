@@ -92,7 +92,9 @@ try {
                 $form_data['errmsg'] = $constant::SUC_CONTRACTOR_SAVE;
             }
         }
-        else if ($action === 'submit_workorder') {
+        else if ($action === 'submit_contractor') {
+
+            $fn_general->updateVersion(9);
 
         } else {
             throw new Exception('(ErrCode:3103) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
@@ -113,7 +115,10 @@ try {
             $fn_contractor->delete_contractor_site($contractorSiteId);
             $fn_general->updateVersion(9);
             $fn_general->save_audit('39', $jwt_data->userId, 'contractor_site_id = ' . $contractorSiteId);
-            $form_data['errmsg'] = $constant::SUC_CONTRACTOR_SITE_DELETE;        }
+            $form_data['errmsg'] = $constant::SUC_CONTRACTOR_SITE_DELETE;
+        }
+        $form_data['result'] = $result;
+        $form_data['success'] = true;
     } else {
         throw new Exception('(ErrCode:3200) [' . __LINE__ . '] - Wrong Request Method');
     }

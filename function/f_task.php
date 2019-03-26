@@ -349,12 +349,12 @@ class Class_task {
             if (Class_db::getInstance()->db_count('sys_user_role', array('role_id'=>$roleId, 'group_id'=>$groupId, 'user_id'=>'<>'.$userId)) == 0) {
                 throw new Exception('(ErrCode:0419) [' . __LINE__ . '] - '.$constant::ERR_ROLE_DELETE_ALONE, 31);
             }
-            if (Class_db::getInstance()->db_count('vw_check_assigned', array('role_id'=>$roleId, 'group_id'=>$groupId, 'user_id'=>$userId)) > 0) {
+            if (Class_db::getInstance()->db_count('vw_check_assigned', array('wfl_task_assign.role_id'=>$roleId, 'wfl_task_assign.group_id'=>$groupId, 'wfl_task_assign.user_id'=>$userId)) > 0) {
                 throw new Exception('(ErrCode:0420) [' . __LINE__ . '] - '.$constant::ERR_ROLE_DELETE_HAVE_TASK, 31);
             }
 
-            Class_db::getInstance()->db_select_delete('sys_user_role', array('group_id'=>$groupId, 'user_id'=>$userId, 'role_id'=>$roleId));
-            Class_db::getInstance()->db_select_delete('wfl_checkpoint_user', array('group_id'=>$groupId, 'user_id'=>$userId, 'role_id'=>$roleId));
+            Class_db::getInstance()->db_delete('sys_user_role', array('group_id'=>$groupId, 'user_id'=>$userId, 'role_id'=>$roleId));
+            Class_db::getInstance()->db_delete('wfl_checkpoint_user', array('group_id'=>$groupId, 'user_id'=>$userId, 'role_id'=>$roleId));
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0401', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());

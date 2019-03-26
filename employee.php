@@ -50,7 +50,7 @@ try {
             $userId = filter_input(INPUT_POST, 'userId');
             $roles = filter_input(INPUT_POST, 'roles');
             $fn_employee->add_employee_existing($groupId, $userId, $roles);
-            $fn_general->save_audit('40', $jwt_data->userId, 'user_id = ' . $userId);
+            $fn_general->save_audit('40', $jwt_data->userId, 'user_id = ' . $userId . ', roles = ' . $roles);
             $form_data['errmsg'] = $constant::SUC_EMPLOYEE_ADD_EXISTING;
         }
         else if ($action === 'add_employee_new') {
@@ -76,7 +76,7 @@ try {
             );
             $userId = $fn_user->add_user($param);
             $fn_employee->add_employee_new($groupId, $userId, $roles);
-            $fn_general->save_audit('41', $jwt_data->userId, 'user_id = ' . $userId);
+            $fn_general->save_audit('41', $jwt_data->userId, 'user_id = ' . $userId . ', roles = ' . $roles);
             $form_data['errmsg'] = $constant::SUC_EMPLOYEE_ADD_NEW;
         } else {
             throw new Exception('(ErrCode:3302) [' . __LINE__ . '] - Parameter action ('.$action.') invalid');
@@ -95,6 +95,35 @@ try {
         }
 
         $form_data['result'] = $result;
+        $form_data['success'] = true;
+    }
+    else if ('PUT' === $request_method) {
+        $userId = filter_input(INPUT_GET, 'userId');
+        $put_data = file_get_contents("php://input");
+        parse_str($put_data, $put_vars);
+        $action = $put_vars['action'];
+
+        if ($action === 'update') {
+            $groupId = $put_vars['groupId'];
+            $rolesStr = $put_vars['roles'];
+            $fn_employee->update_employee($groupId, $userId, $rolesStr);
+            $fn_general->save_audit('42', $jwt_data->userId, 'user_id = ' . $userId . ', roles = ' . $rolesStr);
+            $form_data['errmsg'] = $constant::SUC_EMPLOYEE_EDIT;
+        } else {
+            throw new Exception('(ErrCode:3302) [' . __LINE__ . '] - Parameter action invalid (' . $action . ')');
+        }
+
+        $form_data['result'] = $result;
+        $form_data['success'] = true;
+    }
+    else if ('DELETE' === $request_method) {
+        $userId = filter_input(INPUT_GET, 'userId');
+        $groupId = filter_input(INPUT_GET, 'groupId');
+
+        $fn_employee->delete_employee($groupId, $userId);
+        $fn_general->save_audit('43', $jwt_data->userId, 'user_id = ' . $userId . ', group_id = ' . $groupId);
+
+        $form_data['errmsg'] = $constant::SUC_EMPLOYEE_DELETE;
         $form_data['success'] = true;
     } else {
         throw new Exception('(ErrCode:3300) [' . __LINE__ . '] - Wrong Request Method');
