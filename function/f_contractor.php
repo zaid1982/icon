@@ -343,7 +343,7 @@ class Class_contractor {
                 throw new Exception('(ErrCode:0816) [' . __LINE__ . '] - '.$constant::ERR_CONTRACTOR_NOSITE, 31);
             }
             if (Class_db::getInstance()->db_count('sys_user_role', array('group_id'=>$groupId, 'role_id'=>'5')) == 0) {
-                throw new Exception('(ErrCode:0816) [' . __LINE__ . '] - '.$constant::ERR_CONTRACTOR_NOSUPERVISOR, 31);
+                throw new Exception('(ErrCode:0817) [' . __LINE__ . '] - '.$constant::ERR_CONTRACTOR_NOSUPERVISOR, 31);
             }
 
             Class_db::getInstance()->db_update('icn_contractor', array('contractor_status'=>'1', 'contractor_time_registered'=>'Now()'), array('contractor_id'=>$contractorId));
@@ -352,5 +352,52 @@ class Class_contractor {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
         }
+    }
+
+    /**
+     * @param $contractorId
+     * @throws Exception
+     */
+    public function deactivate_contractor ($contractorId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering deactivate_contractor()');
+
+            if (empty($contractorId)) {
+                throw new Exception('(ErrCode:0803) [' . __LINE__ . '] - Parameter contractorId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_contractor', array('contractor_id'=>$contractorId, 'contractor_status'=>'2')) > 0) {
+                throw new Exception('(ErrCode:0818) [' . __LINE__ . '] - '.$constant::ERR_CONTRACTOR_DEACTIVATE, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_contractor', array('contractor_status'=>'2'), array('contractor_id'=>$contractorId));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $contractorId
+     * @throws Exception
+     */
+    public function activate_contractor ($contractorId) {
+        $constant = new Class_constant();
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering activate_contractor()');
+
+            if (empty($contractorId)) {
+                throw new Exception('(ErrCode:0803) [' . __LINE__ . '] - Parameter contractorId empty');
+            }
+            if (Class_db::getInstance()->db_count('icn_contractor', array('contractor_id'=>$contractorId, 'contractor_status'=>'1')) > 0) {
+                throw new Exception('(ErrCode:0819) [' . __LINE__ . '] - '.$constant::ERR_CONTRACTOR_ACTIVATE, 31);
+            }
+
+            Class_db::getInstance()->db_update('icn_contractor', array('contractor_status'=>'1'), array('contractor_id'=>$contractorId));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+
     }
 }

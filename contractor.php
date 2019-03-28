@@ -97,6 +97,18 @@ try {
             $fn_general->updateVersion(9);
             $fn_general->save_audit('44', $jwt_data->userId, 'contractor_id = ' . $contractorId);
             $form_data['errmsg'] = $constant::SUC_CONTRACTOR_SUBMIT;
+        }
+        else if ($action === 'deactivate') {
+            $fn_contractor->deactivate_contractor($contractorId);
+            $fn_general->updateVersion(9);
+            $fn_general->save_audit('45', $jwt_data->userId, 'contractor_id = ' . $contractorId);
+            $form_data['errmsg'] = $constant::SUC_CONTRACTOR_DEACTIVATE;
+        }
+        else if ($action === 'activate') {
+            $fn_contractor->activate_contractor($contractorId);
+            $fn_general->updateVersion(9);
+            $fn_general->save_audit('46', $jwt_data->userId, 'contractor_id = ' . $contractorId);
+            $form_data['errmsg'] = $constant::SUC_CONTRACTOR_ACTIVATE;
         } else {
             throw new Exception('(ErrCode:3103) [' . __LINE__ . '] - Parameter action (' . $action . ') invalid');
         }

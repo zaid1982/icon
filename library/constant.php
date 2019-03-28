@@ -39,6 +39,8 @@ class Class_constant {
     const ERR_CONTRACTOR_SUBMITTED = 'Contractor already submitted. Please go back to main page and refresh the list.';
     const ERR_CONTRACTOR_NOSITE = 'Please make sure at least 1 site selected';
     const ERR_CONTRACTOR_NOSUPERVISOR = 'Please register at least 1 employee\'s supervisor';
+    const ERR_CONTRACTOR_DEACTIVATE = 'Contractor already inactive';
+    const ERR_CONTRACTOR_ACTIVATE = 'Contractor already active';
     const ERR_CONTRACTOR_SITE_SIMILAR = 'Site already exist';
     const ERR_EMPLOYEE_CHECK_EXIST = 'MyKad No. / Passport No. already exist in the contractor\'s employee list.';
     const ERR_EMPLOYEE_DELETE_ALREADY = 'This user already been removed before. Please refresh the employee\'s contractor list';
@@ -77,6 +79,8 @@ class Class_constant {
     const SUC_CONTRACTOR_SITE_ADD = 'Site successfully added';
     const SUC_CONTRACTOR_SITE_DELETE = 'Site successfully deleted';
     const SUC_CONTRACTOR_SUBMIT = 'Contractor successfully created';
+    const SUC_CONTRACTOR_DEACTIVATE = 'Contractor successfully deactivated';
+    const SUC_CONTRACTOR_ACTIVATE = 'Contractor successfully activated';
     const SUC_EMPLOYEE_ADD_EXISTING = 'User successfully added as contractor\'s employee';
     const SUC_EMPLOYEE_ADD_NEW = 'New contractor\'s employee successfully created';
     const SUC_EMPLOYEE_EDIT = 'Contractor\'s employee successfully updated';
