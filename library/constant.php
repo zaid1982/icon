@@ -81,6 +81,7 @@ class Class_constant {
     const SUC_CONTRACTOR_SUBMIT = 'Contractor successfully created';
     const SUC_CONTRACTOR_DEACTIVATE = 'Contractor successfully deactivated';
     const SUC_CONTRACTOR_ACTIVATE = 'Contractor successfully activated';
+    const SUC_CONTRACTOR_DELETE = 'Contractor successfully deleted';
     const SUC_EMPLOYEE_ADD_EXISTING = 'User successfully added as contractor\'s employee';
     const SUC_EMPLOYEE_ADD_NEW = 'New contractor\'s employee successfully created';
     const SUC_EMPLOYEE_EDIT = 'Contractor\'s employee successfully updated';

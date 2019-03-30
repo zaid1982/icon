@@ -122,7 +122,10 @@ try {
         $contractorSiteId = filter_input(INPUT_GET, 'contractorSiteId');
 
         if (!is_null($contractorId)) {
-
+            $fn_contractor->delete_contractor($contractorId);
+            $fn_general->updateVersion(9);
+            $fn_general->save_audit('47', $jwt_data->userId, 'contractor_site_id = ' . $contractorSiteId);
+            $form_data['errmsg'] = $constant::SUC_CONTRACTOR_DELETE;
         }
         else if (!is_null($contractorSiteId)) {
             $fn_contractor->delete_contractor_site($contractorSiteId);
