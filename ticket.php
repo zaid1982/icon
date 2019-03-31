@@ -111,12 +111,10 @@ try {
             }
         } else if (!is_null($ticketId)) {
             $result = $fn_ticket->get_ticket($ticketId);
+        } else if (isset($headers['Mobile'])) {
+            $result = $fn_ticket->get_ticket_list_mobile();
         } else {
-            if (isset($headers['Mobile'])) {
-                $result = $fn_ticket->get_ticket_list_mobile();
-            } else {
-                $result = $fn_ticket->get_ticket_list();
-            }
+            $result = $fn_ticket->get_ticket_list();
         }
 
         $form_data['result'] = $result;

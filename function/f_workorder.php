@@ -271,6 +271,11 @@ class Class_workorder {
         }
     }
 
+    /**
+     * @param $workorderId
+     * @param $taskId
+     * @throws Exception
+     */
     public function submit_workorder ($workorderId, $taskId) {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering submit_workorder()');
@@ -285,6 +290,59 @@ class Class_workorder {
             $transactionId = Class_db::getInstance()->db_select_col('wfl_task', array('task_id'=>$taskId), 'transaction_id', null, 1);
             Class_db::getInstance()->db_update('icn_workorder', array('transaction_id'=>$transactionId, 'workorder_time_submit'=>'Now()', 'workorder_status'=>'12'), array('workorder_id'=>$workorderId));
             Class_db::getInstance()->db_update('icn_ticket', array('ticket_status'=>'12'), array('transaction_id'=>$transactionId));
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function get_workorder_list () {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_workorder()');
+
+            $result = array();
+            $workorders = Class_db::getInstance()->db_select('icn_workorder', array('workorder_status' => '<>5'));
+            foreach ($workorders as $workorder) {
+                $row_result['workorderId'] = $workorder['workorder_id'];
+                $row_result['workorderNo'] = $this->fn_general->clear_null($workorder['workorder_no']);
+                $row_result['ticketId'] = $workorder['ticket_id'];
+                $row_result['problemtypeId'] = $workorder['problemtype_id'];
+                $row_result['worktypeId'] = $this->fn_general->clear_null($workorder['worktype_id']);
+                $row_result['workcategoryId'] = $workorder['workcategory_id'];
+                $row_result['contractorId'] = $this->fn_general->clear_null($workorder['contractor_id']);
+                $row_result['siteId'] = $this->fn_general->clear_null($workorder['site_id']);
+                $row_result['workorderTimeSubmit'] = str_replace('-', '/', $workorder['workorder_time_submit']);
+                $row_result['workorderStatus'] = $workorder['workorder_status'];
+                array_push($result, $row_result);
+            }
+
+            return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function get_workorder_by_status () {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_workorder_by_status()');
+
+            $result = array();
+            $workorderData = Class_db::getInstance()->db_select('vw_workorder_by_status');
+            foreach ($workorderData as $data) {
+                $row_result['workorderStatus'] = $data['workorder_status'];
+                $row_result['total'] = $data['total'];
+                array_push($result, $row_result);
+            }
+
+            return $result;
         } catch (Exception $ex) {
             $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
             throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());

@@ -55,8 +55,17 @@ try {
     else if ('GET' === $request_method) {
         $workorderId = filter_input(INPUT_GET, 'workorderId');
 
-        if (!is_null($workorderId)) {
+        if (isset($headers['Reportid'])) {
+            $reportId = $headers['Reportid'];
+            if ($reportId === '1') {
+                $result = $fn_workorder->get_workorder_by_status();
+            } else {
+                throw new Exception('(ErrCode:3105) [' . __LINE__ . '] - Parameter Reportid ('.$reportId.') invalid');
+            }
+        } else if (!is_null($workorderId)) {
             $result = $fn_workorder->get_workorder($workorderId);
+        } else {
+            $result = $fn_workorder->get_workorder_list();
         }
 
         $form_data['result'] = $result;

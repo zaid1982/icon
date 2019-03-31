@@ -101,6 +101,11 @@ class Class_sql
                 FROM icn_workorder 
                 LEFT JOIN sys_user ON sys_user.user_id = icn_workorder.workorder_created_by
                 LEFT JOIN sys_user_profile ON sys_user_profile.user_id = sys_user.user_id AND sys_user_profile.user_profile_status = 1";
+            } else if ($title === 'vw_workorder_by_status') {
+                $sql = "SELECT
+                    workorder_status, COUNT(*) AS total
+                FROM icn_workorder
+                GROUP BY workorder_status";
             } else if ($title === 'vw_contractor') {
                 $sql = "SELECT
                     icn_contractor.*,
