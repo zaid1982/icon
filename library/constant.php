@@ -48,6 +48,7 @@ class Class_constant {
     const ERR_ROLE_DELETE_ALONE = 'There is no other user are assigned to this role. Please assign this role to new user before remove this user form this role.';
     const ERR_USER_ADD_SIMILAR_MYKAD = 'MyKad No. / Passport No. already exist. Please use different no.';
     const ERR_USER_ADD_SIMILAR_USERNAME = 'User ID already exist. Please use different user ID.';
+    const ERR_WORKORDER_NOGROUP = 'You are not assigned to either assigning work to employee or verify work tasks';
 
     const SUC_FORGOT_PASSWORD = 'Your password successfully reset. Please login with temporary password sent to your email.';
     const SUC_CHANGE_PASSWORD = 'Your password successfully changed';

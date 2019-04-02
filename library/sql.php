@@ -149,6 +149,17 @@ class Class_sql
                     wfl_task_assign.* 
                 FROM wfl_task_assign  
                 INNER JOIN wfl_transaction ON wfl_transaction.transaction_id = wfl_task_assign.transaction_id AND transaction_status = 4";
+            } else if ($title === 'vw_workorder_pending') {
+                $sql = "SELECT 
+                    wfl_task.task_id,
+                    wfl_checkpoint.checkpoint_desc,
+                    wfl_task.task_time_created,
+                    wfl_task.checkpoint_id,
+                    wfl_task.group_id,
+                    icn_workorder.*
+                FROM wfl_task
+                INNER JOIN icn_workorder ON icn_workorder.transaction_id = wfl_task.transaction_id
+                LEFT JOIN wfl_checkpoint ON wfl_checkpoint.checkpoint_id = wfl_task.checkpoint_id";
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }

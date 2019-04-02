@@ -305,7 +305,7 @@ class Class_workorder {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_workorder()');
 
             $result = array();
-            $workorders = Class_db::getInstance()->db_select('icn_workorder', array('workorder_status' => '<>5'));
+            $workorders = Class_db::getInstance()->db_select('icn_workorder', array('workorder_status'=>'<>5'));
             foreach ($workorders as $workorder) {
                 $row_result['workorderId'] = $workorder['workorder_id'];
                 $row_result['workorderNo'] = $this->fn_general->clear_null($workorder['workorder_no']);
@@ -339,6 +339,42 @@ class Class_workorder {
             foreach ($workorderData as $data) {
                 $row_result['workorderStatus'] = $data['workorder_status'];
                 $row_result['total'] = $data['total'];
+                array_push($result, $row_result);
+            }
+
+            return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    public function get_workorder_pending_list ($groupIds) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_workorder()');
+
+            if (empty($groupIds)) {
+                throw new Exception('(ErrCode:0723) [' . __LINE__ . '] - Parameter workorderId groupIds');
+            }
+
+            $result = array();
+            $workorders = Class_db::getInstance()->db_select('vw_workorder_pending', array('task_current'=>'1', 'wfl_task.checkpoint_id'=>'(3,5)', 'wfl_task.group_id'=>$groupIds));
+            foreach ($workorders as $workorder) {
+                $row_result['taskId'] = $workorder['task_id'];
+                $row_result['checkpointId'] = $workorder['checkpoint_id'];
+                $row_result['checkpointDesc'] = $workorder['checkpoint_desc'];
+                $row_result['taskTimeCreated'] = $workorder['task_time_created'];
+                $row_result['groupId'] = $workorder['group_id'];
+                $row_result['workorderId'] = $workorder['workorder_id'];
+                $row_result['workorderNo'] = $this->fn_general->clear_null($workorder['workorder_no']);
+                $row_result['ticketId'] = $workorder['ticket_id'];
+                $row_result['problemtypeId'] = $workorder['problemtype_id'];
+                $row_result['worktypeId'] = $this->fn_general->clear_null($workorder['worktype_id']);
+                $row_result['workcategoryId'] = $workorder['workcategory_id'];
+                $row_result['contractorId'] = $this->fn_general->clear_null($workorder['contractor_id']);
+                $row_result['siteId'] = $this->fn_general->clear_null($workorder['site_id']);
+                $row_result['workorderTimeSubmit'] = str_replace('-', '/', $workorder['workorder_time_submit']);
+                $row_result['workorderStatus'] = $workorder['workorder_status'];
                 array_push($result, $row_result);
             }
 

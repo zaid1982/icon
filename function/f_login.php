@@ -274,11 +274,8 @@ class Class_login {
             }
 
             $userId = $profile['user_id'];
-            $result = array();
-
-            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array(), null, null, null, array('user_id'=>$userId));
-
             $token = $this->create_jwt($userId, $username);
+            $result = array();
 
             $result['token'] = $token;
             $result['userId'] = $userId;
@@ -294,6 +291,8 @@ class Class_login {
             $result['address']['addressPostcode'] = $this->fn_general->clear_null($profile['address_postcode']);
             $result['address']['addressCity'] = $this->fn_general->clear_null($profile['address_city']);
             $result['address']['addressState'] = $this->fn_general->clear_null($profile['state_desc']);
+
+            $arr_roles = Class_db::getInstance()->db_select('vw_roles', array(), null, null, null, array('user_id'=>$userId));
             $result['roles'] = $arr_roles;
 
             $result['menu'] = $this->get_menu_list($arr_roles);

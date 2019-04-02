@@ -59,6 +59,13 @@ try {
             $reportId = $headers['Reportid'];
             if ($reportId === '1') {
                 $result = $fn_workorder->get_workorder_by_status();
+            }
+            else if ($reportId === 'get_pending_tasks') {
+                $groupIds = $fn_task->get_checkpoint_groups($jwt_data->userId, '5', '(3,5)');
+                if (empty($groupIds)) {
+                    throw new Exception('(ErrCode:3106) [' . __LINE__ . '] - '.$constant::ERR_WORKORDER_NOGROUP);
+                }
+                $result = $fn_workorder->get_workorder_pending_list(implode(',', $groupIds));
             } else {
                 throw new Exception('(ErrCode:3105) [' . __LINE__ . '] - Parameter Reportid ('.$reportId.') invalid');
             }
