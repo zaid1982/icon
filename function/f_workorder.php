@@ -349,6 +349,11 @@ class Class_workorder {
         }
     }
 
+    /**
+     * @param $groupIds
+     * @return array
+     * @throws Exception
+     */
     public function get_workorder_pending_list ($groupIds) {
         try {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_workorder()');
@@ -358,7 +363,7 @@ class Class_workorder {
             }
 
             $result = array();
-            $workorders = Class_db::getInstance()->db_select('vw_workorder_pending', array('task_current'=>'1', 'wfl_task.checkpoint_id'=>'(3,5)', 'wfl_task.group_id'=>$groupIds));
+            $workorders = Class_db::getInstance()->db_select('vw_workorder_pending', array('task_current'=>'1', 'wfl_task.checkpoint_id'=>'(3,5)', 'wfl_task.group_id'=>'('.$groupIds.')'));
             foreach ($workorders as $workorder) {
                 $row_result['taskId'] = $workorder['task_id'];
                 $row_result['checkpointId'] = $workorder['checkpoint_id'];
@@ -375,6 +380,34 @@ class Class_workorder {
                 $row_result['siteId'] = $this->fn_general->clear_null($workorder['site_id']);
                 $row_result['workorderTimeSubmit'] = str_replace('-', '/', $workorder['workorder_time_submit']);
                 $row_result['workorderStatus'] = $workorder['workorder_status'];
+                array_push($result, $row_result);
+            }
+
+            return $result;
+        } catch (Exception $ex) {
+            $this->fn_general->log_error(__FUNCTION__, __LINE__, $ex->getMessage());
+            throw new Exception($this->get_exception('0701', __FUNCTION__, __LINE__, $ex->getMessage()), $ex->getCode());
+        }
+    }
+
+    /**
+     * @param $groupIds
+     * @return array
+     * @throws Exception
+     */
+    public function get_workorder_pending_by_worktype ($groupIds) {
+        try {
+            $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_workorder_pending_by_worktype()');
+
+            if (empty($groupIds)) {
+                throw new Exception('(ErrCode:0723) [' . __LINE__ . '] - Parameter workorderId groupIds');
+            }
+
+            $result = array();
+            $workorderData = Class_db::getInstance()->db_select('vw_workorder_pending_by_worktype', array(), null, null, null, array('group_ids'=>'('.$groupIds.')'));
+            foreach ($workorderData as $data) {
+                $row_result['worktypeId'] = $data['worktype_id'];
+                $row_result['total'] = $data['total'];
                 array_push($result, $row_result);
             }
 

@@ -60,6 +60,13 @@ try {
             if ($reportId === '1') {
                 $result = $fn_workorder->get_workorder_by_status();
             }
+            else if ($reportId === '2') {
+                $groupIds = $fn_task->get_checkpoint_groups($jwt_data->userId, '5', '(3,5)');
+                if (empty($groupIds)) {
+                    throw new Exception('(ErrCode:3106) [' . __LINE__ . '] - '.$constant::ERR_WORKORDER_NOGROUP);
+                }
+                $result = $fn_workorder->get_workorder_pending_by_worktype(implode(',', $groupIds));
+            }
             else if ($reportId === 'get_pending_tasks') {
                 $groupIds = $fn_task->get_checkpoint_groups($jwt_data->userId, '5', '(3,5)');
                 if (empty($groupIds)) {

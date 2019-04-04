@@ -160,6 +160,13 @@ class Class_sql
                 FROM wfl_task
                 INNER JOIN icn_workorder ON icn_workorder.transaction_id = wfl_task.transaction_id
                 LEFT JOIN wfl_checkpoint ON wfl_checkpoint.checkpoint_id = wfl_task.checkpoint_id";
+            } else if ($title === 'vw_workorder_pending_by_worktype') {
+                $sql = "SELECT 
+                    worktype_id, COUNT(*) AS total
+                FROM wfl_task
+                INNER JOIN icn_workorder ON icn_workorder.transaction_id = wfl_task.transaction_id
+                WHERE task_current = 1 AND checkpoint_id IN (3,5) AND group_id IN [group_ids]
+                GROUP BY worktype_id";
             } else {
                 throw new Exception($this->get_exception('0098', __FUNCTION__, __LINE__, 'Sql not exist : ' . $title));
             }
