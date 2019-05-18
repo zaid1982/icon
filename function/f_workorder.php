@@ -359,7 +359,7 @@ class Class_workorder {
             $this->fn_general->log_debug(__FUNCTION__, __LINE__, 'Entering get_workorder()');
 
             if (empty($groupIds)) {
-                throw new Exception('(ErrCode:0723) [' . __LINE__ . '] - Parameter workorderId groupIds');
+                throw new Exception('(ErrCode:0723) [' . __LINE__ . '] - Parameter groupIds empty');
             }
 
             $result = array();
